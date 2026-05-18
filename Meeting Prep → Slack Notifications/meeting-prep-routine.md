@@ -43,6 +43,8 @@ Notifications go to each NTN team member who is on the meeting invite.
 | Morning of | 8:00–10:00 AM EST on meeting day | Reminder with Notion link |
 | Pre-meeting | 30–90 minutes before start | Final alert with Notion link |
 
+**Collision rule:** If a meeting starts during the morning window (e.g. 9am), only the pre-meeting message is sent. Both flags are marked to prevent a duplicate morning send.
+
 Duplicate prevention: sent flags (`48h_sent`, `morning_sent`, `premeet_sent`) are stored in the Notion prep guide's Owner Notes field.
 
 ## Workflow

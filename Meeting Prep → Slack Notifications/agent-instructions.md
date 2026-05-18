@@ -48,12 +48,22 @@ If NO existing prep guide: create one (see Step 4).
 If one already exists: skip creation. Check Owner Notes — if it does NOT contain "48h_sent", send the 48h Slack and update Owner Notes.
 
 ### Window B — Morning of (fires between 8:00–10:00 AM EST on the meeting day)
+Applies if: it is the meeting day AND current time is between 8:00–10:00 AM EST.
 Find the existing prep guide in Notion for this meeting.
-If found AND Owner Notes does NOT contain "morning_sent": send morning Slack (Step 5) and update Owner Notes.
+If found AND Owner Notes does NOT contain "morning_sent": tentatively queue a morning send.
 
 ### Window C — Pre-meeting (fires when meeting starts in 30–90 minutes)
+Applies if: meeting starts in 30–90 minutes from now.
 Find the existing prep guide in Notion for this meeting.
-If found AND Owner Notes does NOT contain "premeet_sent": send pre-meeting Slack (Step 5) and update Owner Notes.
+If found AND Owner Notes does NOT contain "premeet_sent": tentatively queue a pre-meeting send.
+
+### COLLISION RULE — If both Window B and Window C apply to the same meeting in the same run:
+- Send ONLY the pre-meeting message (Window C). Do NOT send the morning message.
+- Mark BOTH "morning_sent" and "premeet_sent" in Owner Notes.
+- This prevents duplicate Slack messages when a meeting starts during the morning window (e.g. a 9am meeting).
+
+If only Window B applies: send morning message, mark "morning_sent".
+If only Window C applies: send pre-meeting message, mark "premeet_sent".
 
 ## STEP 4 — CREATE PREP GUIDE IN NOTION
 
