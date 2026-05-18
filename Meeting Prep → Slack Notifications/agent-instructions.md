@@ -16,6 +16,7 @@ You are running the Meeting Prep Guide routine. Follow these instructions exactl
 ## NOTION
 - Prep Guides database ID: 74a287e66d934e118e772a07f2e175e7
 - Prep Guides data source: collection://e8aa7033-b4b5-4953-9027-eb0b38605023
+- Projects data source: collection://7fe56cd2-373b-8368-a21c-87f2c9b61ec3
 
 ## STEP 1 — GET CURRENT TIME
 Fetch the current UTC time. Determine current time in EDT (UTC-4) or EST (UTC-5) depending on daylight saving. Today's window checks will all be relative to this.
@@ -65,12 +66,28 @@ If found AND Owner Notes does NOT contain "premeet_sent": tentatively queue a pr
 If only Window B applies: send morning message, mark "morning_sent".
 If only Window C applies: send pre-meeting message, mark "premeet_sent".
 
-## STEP 4 — CREATE PREP GUIDE IN NOTION
+## STEP 4 — MATCH TO NOTION PROJECT
+
+Before creating the prep guide, attempt to find a matching project in the Notion Projects database.
+
+1. Determine the company name from: HubSpot company lookup using external attendee email domain, or the meeting title, or the external attendee email domain itself (e.g. "acme.com" → "Acme").
+
+2. Search the Projects database (collection://7fe56cd2-373b-8368-a21c-87f2c9b61ec3) for a project whose `Project Name` contains the company name (case-insensitive).
+
+3. Matching rules:
+   - If exactly one project matches: use its page URL as the `Project` relation value
+   - If zero matches: leave `Project` blank
+   - If multiple matches: leave `Project` blank (conservative — do not guess)
+
+Store the matched project page URL (or null) for use in Step 5.
+
+## STEP 5 — CREATE PREP GUIDE IN NOTION
 
 Create a new page in the Prep Guides database with:
 - Title: [Company/Client Name] — Prep Guide ([Meeting Date as MM/DD/YYYY])
 - Meeting Date: meeting start date
 - Status: Draft
+- Project: matched project page URL from Step 4 (omit if no match)
 - Owner Notes: 48h_sent (add this after sending the Slack)
 
 For the page body, generate a full meeting prep brief using the client-meeting-preparation skill logic:
@@ -123,7 +140,7 @@ If context is limited, populate what you can and mark sections TBD with a note o
 
 After creating the page, save the Notion URL.
 
-## STEP 5 — SEND SLACK DMs
+## STEP 6 — SEND SLACK DMs
 
 Send individual Slack DMs to each NTN attendee on the meeting using the bot token:
 
@@ -150,5 +167,5 @@ Determine which NTN team members to DM:
 
 After sending each Slack batch, update the Notion prep guide Owner Notes to append the relevant flag (morning_sent or premeet_sent), preserving any existing flags.
 
-## STEP 6 — DONE
+## STEP 7 — DONE
 If no actions were needed this run, stop silently. Do not send any Slack messages when there is nothing to do.

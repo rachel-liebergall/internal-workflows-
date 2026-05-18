@@ -58,7 +58,10 @@ Scans all three team calendars for the next 4 days. Filters to external meetings
 ### Step 3 — Determine action needed per meeting
 Checks hours until start and which notification windows apply. Looks up existing prep guide in Notion to avoid duplicates.
 
-### Step 4 — Create prep guide in Notion
+### Step 4 — Match to Notion project
+Searches the Projects database for a project whose `Project Name` contains the company name (case-insensitive). Sets the `Project` relation if exactly one match is found. Leaves blank if zero or multiple matches (conservative).
+
+### Step 5 — Create prep guide in Notion
 Creates a new page in the Prep Guides database with a full meeting brief:
 - At-a-glance (company, contacts, NTN team, date)
 - Executive Summary
@@ -86,6 +89,7 @@ No Slack messages sent when there are no qualifying actions this run.
 | Database | Purpose | Notion ID |
 |---|---|---|
 | Prep Guides | One row per meeting prep guide | `74a287e66d934e118e772a07f2e175e7` |
+| Projects | Matched via company name for relation tagging | `15456cd2373b82e2bca10190134ace79` |
 
 ## MCP Connections
 
