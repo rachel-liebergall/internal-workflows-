@@ -62,14 +62,7 @@ Append the formatted content block to the matched Notion project page body.
 - Append the content as paragraph blocks (or quote/code as appropriate for the content type)
 - NEVER overwrite existing page content — only append
 
-## STEP 4 — SET THE CONTEXT CHECKBOX
-
-Update the `Context` property on the project page:
-- Property: `Context`
-- Type: checkbox
-- Value: `true`
-
-## STEP 5 — CONFIRM
+## STEP 4 — CONFIRM
 
 Reply with:
 
@@ -85,6 +78,5 @@ Notion page: [URL]
 
 - Exact project name match only — never save to the wrong project
 - Never overwrite existing content — always append
-- Always set Context checkbox to true after saving
 - If the page cannot be updated: report the error clearly, do not proceed silently
 - If content is ambiguous about which project it belongs to: ask the user to confirm before saving
