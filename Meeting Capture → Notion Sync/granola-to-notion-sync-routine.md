@@ -22,10 +22,11 @@ Scans the **Nowtonext** enterprise workspace (ID: `711732b8-9958-4c2c-9427-572bc
 
 ## Databases
 
-| Database | Purpose | Notion ID |
+| Database | Purpose | Notion ID / Data Source |
 |---|---|---|
 | Team Granola Capture | Destination — one row per meeting | `46756cd2-373b-8263-a24d-01539a3d97cf` |
-| Projects | Relation mapping for project tagging | `fe656cd2-373b-83d7-8811-819b8173ecdf` |
+| Projects | Project relation mapping | `collection://7fe56cd2-373b-8368-a21c-87f2c9b61ec3` |
+| Sales Opportunities | Sales opportunity relation mapping (when project = Opportunity Tracking) | `collection://05d73447-11f8-439f-9ca9-00c6a1a6fec2` |
 
 ## Workflow
 
@@ -73,6 +74,14 @@ Always `rachel@nowtonext.ai`
 - Sub-folder set → fuzzy match against project names
 - No sub-folder → match by attendee company domain
 - Internal meeting → match by meeting title keywords
+- No confident match + External meeting → defaults to "Opportunity Tracking" project
+- No confident match + Internal meeting → left blank
+
+**Sales Opportunity (relation)**
+- Only runs when Projects resolves to "Opportunity Tracking"
+- Company name derived from sub-folder (primary) or external attendee email domain (fallback)
+- Fuzzy match against the Company field in Sales Opportunities database
+- Excludes Closed Won / Closed Lost opportunities
 - No confident match → left blank (conservative)
 
 ### Step 5 — Create the row
