@@ -43,7 +43,7 @@ Deduplicate meetings that appear on multiple team calendars (same title + start 
 
 For each meeting, calculate hours until start from current time. Then check these three windows:
 
-### Window A — 48h prep (fires once between 47–49 hours before start)
+### Window A — Prep guide creation (meeting is more than 1 hour away AND no prep guide exists yet)
 Check Notion Prep Guides database for an existing page where Meeting Date matches this meeting's date AND Prep Guide title contains the company/client name.
 If NO existing prep guide: create one (see Step 4).
 If one already exists: skip creation. Check Owner Notes — if it does NOT contain "48h_sent", send the 48h Slack and update Owner Notes.
