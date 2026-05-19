@@ -6,7 +6,7 @@ Automated routine that pulls completed meetings from Granola and syncs them as r
 
 ## Schedule
 
-**Every hour, 7am–8pm EDT** (`0 0,11-23 * * *` UTC)
+**Every 2 hours, 7am–7pm EDT** (`0 11,13,15,17,19,21,23 * * *` UTC)
 
 Runs as a remote trigger in Anthropic's cloud infrastructure. Laptop does not need to be on or connected.
 

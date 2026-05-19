@@ -6,7 +6,7 @@ Automated routine that runs hourly, detects upcoming external client meetings, c
 
 ## Schedule
 
-**Every hour** (`0 * * * *` UTC)
+**Every hour, 5am–5pm EDT** (`0 9-21 * * *` UTC)
 
 Runs as a remote trigger in Anthropic's cloud infrastructure. Laptop does not need to be on or connected.
 
@@ -41,7 +41,7 @@ Notifications go to each NTN team member who is on the meeting invite.
 |---|---|---|
 | 48h prep | 47–49 hours before start | Prep guide created — link + attendees |
 | Morning of | 8:00–10:00 AM EST on meeting day | Reminder with Notion link |
-| Pre-meeting | 30–90 minutes before start | Final alert with Notion link |
+| Pre-meeting | 30–90 minutes before start (~1 hour) | Final alert with Notion link |
 
 **Collision rule:** If a meeting starts during the morning window (e.g. 9am), only the pre-meeting message is sent. Both flags are marked to prevent a duplicate morning send.
 
@@ -102,7 +102,7 @@ No Slack messages sent when there are no qualifying actions this run.
 
 ## Notes
 
-- Pre-meeting window is 30–90 min (hourly routine cannot guarantee exactly 30 min)
+- Pre-meeting window is 30–90 min — fires at the hourly run closest to 1 hour before start
 - Morning window is 8–10am EST to account for hourly run timing
 - If no prep guide exists when morning/pre-meeting window fires, those notifications are skipped
 - Prep guide Status defaults to "Draft" — team can update to "Ready" after reviewing

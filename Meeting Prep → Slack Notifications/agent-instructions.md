@@ -163,7 +163,7 @@ Determine which NTN team members to DM:
 '☀️ *Meeting Today — Prep Reminder*\n\n*Meeting:* [title]\n*Time:* [time EST]\n*External:* [external attendee names and emails]\n\n🔗 [Notion prep guide URL]'
 
 ### Pre-meeting message:
-'⏰ *Starting in ~30 min: [meeting title]*\n\n*Time:* [time EST]\n*External:* [external attendee names]\n\n🔗 [Notion prep guide URL]'
+'⏰ *Starting in ~1 hour: [meeting title]*\n\n*Time:* [time EST]\n*External:* [external attendee names]\n\n🔗 [Notion prep guide URL]'
 
 After sending each Slack batch, update the Notion prep guide Owner Notes to append the relevant flag (morning_sent or premeet_sent), preserving any existing flags.
 
