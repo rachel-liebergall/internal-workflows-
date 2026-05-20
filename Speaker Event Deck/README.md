@@ -1,54 +1,52 @@
 # Speaker Event Deck
 
-A Claude Code remote routine that creates a thought leadership presentation draft for an upcoming speaker event. Triggered manually via "Run now" in claude.ai/code/routines (or on a monthly schedule), it reads a pending Notion task, gathers context from across your stack, generates a PPTX file, and uploads everything to Google Drive.
+Two Claude Code remote routines that handle the full speaker deck lifecycle — from creation through post-event learning.
 
-## How To Trigger
+## Routines
 
-1. Create a Notion task in the **Tasks** database with "deck", "speaker", or "presentation" in the title, and set it to any status except Done, Complete, or In Review
-2. Go to [claude.ai/code/routines](https://claude.ai/code/routines) and hit **Run now** on `create-speaker-deck`
+### 1. `create-speaker-deck`
+Runs automatically at **9am and 1pm ET daily**. Finds any pending deck task in Notion, gathers context, generates a PPTX, and uploads everything to Google Drive.
 
-Claude will handle the rest.
+**Trigger:** Create a Notion task with "deck", "speaker", or "presentation" in the title, status anything except Done/Cancelled/To Review.
 
-## What It Does
+### 2. `deck-reflection-agent`
+Runs every **Monday at 9am ET**. Reviews completed deck tasks, enforces Deck Notes, extracts learnings, and updates the Deck Playbook.
 
-1. Reads the **Tasks** Notion database for any pending deck/speaker/presentation task
-2. Pulls context from Notion (project), Google Drive (existing decks + template), Granola (meeting transcripts), Google Calendar (event details), and Gmail (email threads)
-3. Writes full slide-by-slide content — headlines, body copy, speaker notes
-4. Generates an actual `.pptx` file using python-pptx (if a template is found in Drive, it's used as the base)
-5. Creates a new event subfolder in **Upcoming Speaker Events** on Google Drive
-6. Uploads the PPTX and a companion slide content Google Doc to that folder
-7. Updates the Notion task status to **In Review** and adds the Drive folder and doc links
-8. Sends a Slack DM to each assigned task owner
+**Enforcement:** If a deck task is marked Done without Deck Notes filled in, the routine reverts it to "To Review" and DMs the owner.
 
-## Output
+---
 
-| Item | Location |
-| --- | --- |
-| Event folder | Google Drive → Upcoming Speaker Events → [Event Name] |
-| PPTX file | Inside the event folder |
-| Slide content doc | Inside the event folder (Google Doc with full copy) |
-| Notion task | Updated with Drive links, status set to In Review |
-| Slack notification | DM to each assigned task owner |
+## Full Workflow
+
+1. Create a Notion task with "deck" or "speaker" in the title
+2. `create-speaker-deck` picks it up → builds the PPTX → uploads to Drive → sets task to **To Review** → Slacks owners with links and a reminder to fill in Deck Notes after the presentation
+3. After the event, owner fills in **Deck Notes** on the Notion task and marks it **Done**
+4. `deck-reflection-agent` extracts learnings from Deck Notes → appends to the **NTN Speaker Deck Playbook** in Drive → future decks are informed by this playbook
+5. If Done is marked without Deck Notes → routine reverts to To Review and sends a Slack nudge
+
+---
 
 ## Routine Configuration
 
-| Field | Value |
-| --- | --- |
-| Routine ID | `trig_01YPMLFnticN545GzH7ssfFh` |
-| Model | claude-sonnet-4-6 |
-| Schedule | Monthly (primarily triggered via Run now) |
-| MCP Connections | Notion, Google Drive, Gmail, Google Calendar, Granola, Slack |
+| Routine | ID | Schedule | MCPs |
+| --- | --- | --- | --- |
+| create-speaker-deck | `trig_01YPMLFnticN545GzH7ssfFh` | 9am + 1pm ET daily | Notion, Drive, Gmail, Calendar, Granola, Slack |
+| deck-reflection-agent | `trig_01UELX1NVCc158G3hGMKHtf9` | Monday 9am ET | Notion, Drive, Slack |
+
+Manage routines: https://claude.ai/code/routines
 
 ## Key IDs
 
 | Resource | ID |
 | --- | --- |
 | Upcoming Speaker Events (Drive folder) | `1RERSeJYFD08Bl3ysU9U1cMPezwYPoJC7` |
+| NTN Speaker Deck Playbook (Drive doc) | `191e-gvOlEAZ_BfuoEJUIZNWWML6XOGl9_GXBEES_g1w` |
 | Projects (Notion DB) | `15456cd2373b82e2bca10190134ace79` |
 | Tasks (Notion DB) | `36e56cd2373b8325939281a80a6cb5d9` |
 
-## Notes
+## Files
 
-- The agent uses Bash + python-pptx to generate an actual PPTX file (not a Google Slides file)
-- If a template is found in the Upcoming Speaker Events Drive folder, it's downloaded and used as the base; otherwise a clean deck is generated
-- The SKILL.md in this folder contains the full agent prompt used by the routine
+| File | Contents |
+| --- | --- |
+| `SKILL.md` | Full prompt for `create-speaker-deck` routine |
+| `REFLECTION.md` | Full prompt for `deck-reflection-agent` routine |
