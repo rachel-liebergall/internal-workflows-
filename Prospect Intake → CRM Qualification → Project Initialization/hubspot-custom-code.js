@@ -46,7 +46,7 @@ exports.main = async (event, callback) => {
           "contact_owner",
         ])
       ),
-      description: getInputField(event, ["description"]),
+      description: getInputField(event, ["deal_description", "description"]),
       hubSpotUrl: buildHubSpotRecordUrl(event),
     };
 
