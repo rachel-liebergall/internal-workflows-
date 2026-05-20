@@ -46,6 +46,7 @@ exports.main = async (event, callback) => {
           "contact_owner",
         ])
       ),
+      description: getInputField(event, ["description"]),
       hubSpotUrl: buildHubSpotRecordUrl(event),
     };
 
@@ -221,7 +222,7 @@ function buildNotionProperties(
   opportunity,
   notionUserIdsByOwnerName
 ) {
-  return {
+  const properties = {
     Opportunity: toNotionValue(
       "Opportunity",
       databaseProperties.Opportunity,
@@ -260,6 +261,16 @@ function buildNotionProperties(
       opportunity.hubSpotUrl
     ),
   };
+
+  if (opportunity.description && databaseProperties["Deal Description"]) {
+    properties["Deal Description"] = toNotionValue(
+      "Deal Description",
+      databaseProperties["Deal Description"],
+      opportunity.description
+    );
+  }
+
+  return properties;
 }
 
 function toNotionValue(
@@ -365,6 +376,8 @@ function formatDealStage(dealStage) {
     presentationscheduled: "Presentation Scheduled",
     decisionmakerboughtin: "Decision Maker Bought In",
     contractsent: "Contract Sent",
+    proposalsent: "Proposal",
+    proposal: "Proposal",
     closedwon: "Closed Won",
     closedlost: "Closed Lost",
   };
