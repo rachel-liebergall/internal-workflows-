@@ -43,10 +43,15 @@ Deduplicate meetings that appear on multiple team calendars (same title + start 
 
 For each meeting, calculate hours until start from current time. Then check these three windows:
 
-### Window A — Prep guide creation (meeting is more than 1 hour away AND no prep guide exists yet)
-Check Notion Prep Guides database for an existing page where Meeting Date matches this meeting's date AND Prep Guide title contains the company/client name.
-If NO existing prep guide: create one (see Step 4).
-If one already exists: skip creation. Check Owner Notes — if it does NOT contain "48h_sent", send the 48h Slack and update Owner Notes.
+### Window A — Prep guide creation or date update (meeting is more than 1 hour away)
+Search the Notion Prep Guides database for an existing page whose title contains the company/client name. **Do NOT filter by date** — the meeting date may have changed since the guide was created.
+
+**If NO existing prep guide found:** create one (see Step 4).
+
+**If an existing prep guide is found:**
+  a. Check if the Meeting Date on the existing Notion page matches this meeting's current start date.
+  b. If the date has changed: update the Notion page's **Meeting Date** property to the new date AND update the **page title** to reflect the new date using the format: `[Company] — Prep Guide ([MM/DD/YYYY])`. Log that the date was updated.
+  c. Check Owner Notes — if it does NOT contain "48h_sent", send the 48h Slack and update Owner Notes.
 
 ### Window B — Morning of (fires between 8:00–10:00 AM EST on the meeting day)
 Applies if: it is the meeting day AND current time is between 8:00–10:00 AM EST.
