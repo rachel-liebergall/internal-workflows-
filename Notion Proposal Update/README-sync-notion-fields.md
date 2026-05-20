@@ -73,7 +73,7 @@ Add these rows under HubSpot's `Properties to include in code` section:
 | `dealname` | Deal Name |
 | `dealstage` | Deal Stage |
 | `description` | Description |
-| `initial_meeting_date` | [your initial meeting date property] |
+| `initial_meeting_date` | Initial Meeting Date |
 
 Replace `[your initial meeting date property]` with the internal name of your HubSpot deal property for the initial meeting date.
 
