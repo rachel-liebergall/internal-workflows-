@@ -1,45 +1,45 @@
 # Speaker Event Deck
 
-A Claude project skill that creates a thought leadership presentation draft for an upcoming speaker event. Triggered by a natural language request, it gathers context from across your stack and delivers a ready-to-fill deck in Google Drive, an updated Notion task, and a Slack notification to the assigned owners.
+A Claude Code remote routine that creates a thought leadership presentation draft for an upcoming speaker event. Triggered manually via "Run now" in claude.ai/code/routines (or on a monthly schedule), it reads a pending Notion task, gathers context from across your stack, generates a PPTX file, and uploads everything to Google Drive.
 
-## How To Use
+## How To Trigger
 
-In your Claude project, type:
-
-```
-Create a speaker deck for [client/event name]
-```
+1. Create a Notion task in the **Tasks** database with "deck", "speaker", or "presentation" in the title, and set it to any status except Done, Complete, or In Review
+2. Go to [claude.ai/code/routines](https://claude.ai/code/routines) and hit **Run now** on `create-speaker-deck`
 
 Claude will handle the rest.
 
 ## What It Does
 
-1. Checks for a deck template (project file or Google Drive)
-2. Pulls context from Notion (project + task), Google Drive (existing decks), Granola (meeting transcripts), Google Calendar (event details), and Gmail (email threads)
+1. Reads the **Tasks** Notion database for any pending deck/speaker/presentation task
+2. Pulls context from Notion (project), Google Drive (existing decks + template), Granola (meeting transcripts), Google Calendar (event details), and Gmail (email threads)
 3. Writes full slide-by-slide content — headlines, body copy, speaker notes
-4. Creates a new event subfolder in **Upcoming Speaker Events** on Google Drive
-5. Copies the template into the folder and creates a companion content doc
-6. Updates the Notion task with Drive links and marks it as draft ready
-7. Sends a Slack DM to each assigned owner with links to everything
+4. Generates an actual `.pptx` file using python-pptx (if a template is found in Drive, it's used as the base)
+5. Creates a new event subfolder in **Upcoming Speaker Events** on Google Drive
+6. Uploads the PPTX and a companion slide content Google Doc to that folder
+7. Updates the Notion task status to **In Review** and adds the Drive folder and doc links
+8. Sends a Slack DM to each assigned task owner
 
 ## Output
 
 | Item | Location |
 | --- | --- |
 | Event folder | Google Drive → Upcoming Speaker Events → [Event Name] |
-| Template copy | Inside the event folder, renamed as DRAFT |
-| Slide content doc | Inside the event folder |
-| Notion task | Updated with Drive links and status |
+| PPTX file | Inside the event folder |
+| Slide content doc | Inside the event folder (Google Doc with full copy) |
+| Notion task | Updated with Drive links, status set to In Review |
 | Slack notification | DM to each assigned task owner |
 
-## Setup (Claude Project)
+## Routine Configuration
 
-1. **Create a Claude project** on claude.ai or Claude Desktop
-2. **Connect MCPs:** Google Drive, Gmail, Google Calendar, Granola, Notion, Slack
-3. **Upload your deck template** as a project file so Claude can reference its structure
-4. **Add the contents of `SKILL.md`** to the project's custom instructions
+| Field | Value |
+| --- | --- |
+| Routine ID | `trig_01YPMLFnticN545GzH7ssfFh` |
+| Model | claude-sonnet-4-6 |
+| Schedule | Monthly (primarily triggered via Run now) |
+| MCP Connections | Notion, Google Drive, Gmail, Google Calendar, Granola, Slack |
 
-## Key IDs (hardcoded in SKILL.md)
+## Key IDs
 
 | Resource | ID |
 | --- | --- |
@@ -49,6 +49,6 @@ Claude will handle the rest.
 
 ## Notes
 
-- No Bash required — works in claude.ai web and Claude Desktop
-- Deck content is written as a Google Doc structured slide-by-slide; paste into the template copy to complete the deck
-- This skill is designed to be triggered manually for now — a Notion task trigger will automate it in a future workflow
+- The agent uses Bash + python-pptx to generate an actual PPTX file (not a Google Slides file)
+- If a template is found in the Upcoming Speaker Events Drive folder, it's downloaded and used as the base; otherwise a clean deck is generated
+- The SKILL.md in this folder contains the full agent prompt used by the routine
