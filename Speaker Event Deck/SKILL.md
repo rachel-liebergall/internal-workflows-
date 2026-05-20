@@ -1,110 +1,138 @@
 # Create Speaker Event Deck
 
-You are creating a thought leadership presentation deck for an upcoming speaker event. You will gather context from multiple sources, generate structured slide content, copy the deck template into a new event folder on Google Drive, create a companion content document, update the Notion task, and notify the assigned owners via Slack.
-
-## Input
-
-Extract the client or event name from the user's message. This is your primary search key across all sources.
+You are a remote Claude agent running in Anthropic's cloud. You will read a pending Notion task, gather context from multiple sources, generate a full thought leadership PPTX deck using python-pptx, upload it to Google Drive, update the Notion task, and notify the assigned owners via Slack.
 
 ---
 
-## Step 1: Check for a Deck Template
+## Step 1: Find the Pending Notion Task
 
-1. Check if a presentation template has been uploaded to this Claude project. If yes, note its structure — number of slides, slide types, layout names, and any placeholder conventions (e.g. [TITLE], [BODY], speaker info placement)
-2. Also search Google Drive for a template file in the **Upcoming Speaker Events** folder (ID: `1RERSeJYFD08Bl3ysU9U1cMPezwYPoJC7`) — look for files with "template" in the name
-3. If a template is found in Drive, note its file ID — you will copy it in Step 6
-4. If no template is found anywhere, proceed with a standard 10-12 slide thought leadership structure
+Search the **Tasks** database (https://www.notion.so/36e56cd2373b8325939281a80a6cb5d9) for a task whose title contains "deck", "speaker", or "presentation" (case-insensitive) AND whose status is NOT Done, Complete, or In Review.
 
----
+If no task is found, stop and report: "No pending speaker deck task found in Notion."
 
-## Step 2: Gather Notion Context
+From the task, extract:
+- Event/client name (the subject of the deck)
+- Assigned owners
+- Any notes or linked project
 
-1. Search the **Projects** database (https://www.notion.so/15456cd2373b82e2bca10190134ace79) for a project matching the client/event name
-2. Search the **Tasks** database (https://www.notion.so/36e56cd2373b8325939281a80a6cb5d9) for a task related to creating a deck or presentation for this project
-3. Note the project details, assigned owners, and task ID — you will update this task and notify these owners at the end
+Also search the **Projects** database (https://www.notion.so/15456cd2373b82e2bca10190134ace79) for a project matching the event/client name and read any relevant context.
 
 ---
 
-## Step 3: Gather Google Drive Context
+## Step 2: Check for a Deck Template in Drive
 
-1. Search the **Upcoming Speaker Events** folder (ID: `1RERSeJYFD08Bl3ysU9U1cMPezwYPoJC7`) for any existing decks, briefs, or materials related to this client or event
-2. Read any relevant files to understand content already developed for this event
-3. Search broadly across Drive for any other presentations or documents referencing the client name — past decks are valuable reference for tone, structure, and content depth
+Search the **Upcoming Speaker Events** Google Drive folder (ID: `1RERSeJYFD08Bl3ysU9U1cMPezwYPoJC7`) for any file with "template" in the name.
 
----
+If found:
+- Note the file ID
+- Download the file content as base64
+- Save it to `/tmp/template.pptx`
+- Use it as the base for the new deck (python-pptx can open and modify it)
 
-## Step 4: Gather Meeting & Email Context
-
-1. Search **Granola** for meeting transcripts mentioning the client or event name — extract key themes, talking points, goals, and audience details
-2. Search **Google Calendar** for events related to the client — note the event date, format, audience, and any agenda details visible
-3. Search **Gmail** for email threads related to the client — look for briefs, speaker requirements, topic requests, or any audience expectations
+If not found: generate a clean deck from scratch.
 
 ---
 
-## Step 5: Synthesize Slide Content
+## Step 3: Gather Context
 
-Based on all gathered context, write the full content for each slide. This is a **thought leadership** presentation — it should position Now to Next as a credible, opinionated voice, not pitch services.
+Search all of these sources for content about the client/event:
 
-Match the number and type of slides to the template structure if one was found. If no template, use this default structure:
+1. **Google Drive** — search the Upcoming Speaker Events folder and broadly across Drive for existing decks, briefs, or materials referencing the client name
+2. **Granola** — search for meeting transcripts mentioning the client or event; extract themes, audience details, goals, talking points
+3. **Google Calendar** — find the event; note date, format, audience, agenda
+4. **Gmail** — find email threads with briefs, speaker requirements, topic requests, or audience expectations
+5. **Notion Projects DB** — read the linked project page for background and positioning
+
+---
+
+## Step 4: Synthesize Slide Outline
+
+Based on gathered context, write the full content for each slide. This is a **thought leadership** presentation — it should position Now to Next as a credible, opinionated voice, not pitch services.
+
+Use this default structure (11 slides):
 
 1. **Title** — event name, speaker name, date, NTN tagline
-2. **About Now to Next** — brief, punchy, credibility-building (2-3 lines max)
-3. **The Landscape** — what's happening in the industry right now (data point or observation)
+2. **About Now to Next** — brief, credibility-building (2-3 lines max)
+3. **The Landscape** — what's happening in the industry right now
 4. **The Tension** — the core problem or question leaders are wrestling with
-5. **Insight 1** — a specific, opinionated point of view with supporting evidence
+5. **Insight 1** — specific, opinionated point of view with supporting evidence
 6. **Insight 2**
 7. **Insight 3**
-8. **A Framework or Model** — something visual and memorable (describe it clearly for the slide)
+8. **A Framework or Model** — something visual and memorable (describe it clearly)
 9. **Proof Points** — real examples, outcomes, or stories
 10. **What To Do Next** — one clear, actionable takeaway for the audience
 11. **Q&A / Contact** — speaker name, email, NTN website
 
 For each slide write:
 - **Headline:** (the main message, 8 words or fewer)
-- **Body:** (bullet points or short paragraphs as appropriate)
+- **Body:** (bullet points or short paragraphs)
 - **Speaker notes:** (what to say out loud — 2-4 sentences)
 
 ---
 
-## Step 6: Create Event Folder and Copy Template
+## Step 5: Generate the PPTX
 
-1. In the **Upcoming Speaker Events** Google Drive folder (ID: `1RERSeJYFD08Bl3ysU9U1cMPezwYPoJC7`), create a new subfolder named after the event (e.g. `Foro — June 2026`)
-2. If a template file was found in Step 1, copy it into the new subfolder and rename it: `[ClientName] — Speaker Deck — DRAFT`
-3. If no template was found, create a new Google Doc in the folder titled `[ClientName] — Speaker Deck — DRAFT` and note that it will need to be formatted into slides
+Run the following in Bash:
 
----
+```bash
+pip install python-pptx -q
+```
 
-## Step 7: Create the Slide Content Document
+Then write a Python script to `/tmp/generate_deck.py` that:
+- If `/tmp/template.pptx` exists: opens it with `Presentation('/tmp/template.pptx')` and populates or replaces slides
+- If no template: creates a new `Presentation()` and adds slides with titles and body text using layouts
+- Saves output to `/tmp/speaker-deck.pptx`
 
-1. In the same event subfolder, create a new Google Doc titled: `[ClientName] — Deck Content`
-2. Write the full slide-by-slide content into this doc, structured clearly by slide number and type
-3. Include headlines, body copy, and speaker notes for every slide
-4. Add a note at the top: "Copy this content into the deck template slide-by-slide. Template is in this folder."
-5. Note the shareable links to both the template copy and the content doc
+Run the script: `python3 /tmp/generate_deck.py`
 
----
-
-## Step 8: Update Notion Task
-
-1. Find the task identified in Step 2
-2. Add the Google Drive folder link and the deck content doc link to the task description
-3. Update the task status to reflect the draft is ready — check what status values exist in the database and use the most appropriate one (e.g. "In Progress", "Review", "Draft Ready")
+Verify `/tmp/speaker-deck.pptx` was created.
 
 ---
 
-## Step 9: Send Slack Notification
+## Step 6: Upload to Google Drive
+
+1. Read `/tmp/speaker-deck.pptx` as base64:
+   ```bash
+   base64 /tmp/speaker-deck.pptx
+   ```
+
+2. Create a new subfolder in the Upcoming Speaker Events folder (ID: `1RERSeJYFD08Bl3ysU9U1cMPezwYPoJC7`) named after the event (e.g. `Foro — June 2026`)
+
+3. Upload the PPTX into the new subfolder using the Drive MCP `create_file` tool:
+   - `name`: `[ClientName] — Speaker Deck — DRAFT.pptx`
+   - `mimeType`: `application/vnd.openxmlformats-officedocument.presentationml.presentation`
+   - `base64Content`: the base64 string from step 1
+   - `disableConversionToGoogleType`: true
+   - `parentFolderId`: the new subfolder ID
+
+4. Create a companion Google Doc in the same subfolder titled `[ClientName] — Deck Content` containing the full slide-by-slide outline from Step 4 (headlines, body, speaker notes for every slide). Add a note at the top: "Copy this content into the deck file slide-by-slide. PPTX is in this folder."
+
+5. Note the shareable links to both files.
+
+---
+
+## Step 7: Update Notion Task
+
+1. Find the task identified in Step 1
+2. Update the task status to **In Review**
+3. Add the Google Drive folder link and the deck content doc link to the task description
+
+---
+
+## Step 8: Send Slack Notification
 
 1. From the Notion task, identify the assigned owners
-2. Look up each owner's Slack username (search Slack users by name if needed)
+2. Look up each owner's Slack user ID (search Slack users by name or email)
 3. Send each owner a direct Slack message:
 
    > Hey — the speaker deck draft for **[Event Name]** is ready for review.
    >
    > 📁 Drive folder: [link]
+   > 📊 PPTX deck: [link]
    > 📝 Slide content doc: [link]
    > ✅ Notion task: [link]
    >
-   > The content doc has the full slide-by-slide copy. The template copy is in the same folder. Let me know if anything needs adjusting.
+   > The content doc has the full slide-by-slide copy. Let me know if anything needs adjusting.
 
 ---
 
@@ -112,6 +140,7 @@ For each slide write:
 
 Report back with:
 - Event name and slide count
-- Links: Drive folder, template copy, content doc, Notion task
+- Links: Drive folder, PPTX file, content doc, Notion task
 - Sources used: meetings found, emails found, Drive files referenced
+- Notion task status updated to: In Review
 - Who was notified on Slack
