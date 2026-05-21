@@ -100,7 +100,6 @@ function validateOpportunity(opportunity) {
   const requiredFields = {
     opportunityName: "deal_name",
     companyName: "associated company name",
-    contactName: "associated contact first/last name",
     dealStage: "deal_stage",
     meetingDate: "meeting_date",
     hubSpotUrl: "HubSpot enrolled record ID",
@@ -134,15 +133,15 @@ async function fetchAssociatedContactAndCompany(dealId, hubSpotPrivateAppToken) 
   const companyId = await fetchAssociatedObjectId(dealId, "companies", headers);
 
   const [contact, company] = await Promise.all([
-    fetchHubSpotObject("contacts", contactId, ["firstname", "lastname"], headers),
+    fetchHubSpotObject("contacts", contactId, ["firstname", "lastname", "email"], headers),
     fetchHubSpotObject("companies", companyId, ["name"], headers),
   ]);
 
   return {
-    contactName: buildContactName(
-      contact.properties.firstname,
-      contact.properties.lastname
-    ),
+    contactName:
+      buildContactName(contact.properties.firstname, contact.properties.lastname) ||
+      contact.properties.email ||
+      "",
     companyName: company.properties.name,
   };
 }
