@@ -30,18 +30,27 @@ curl -s -X POST https://slack.com/api/chat.postMessage \
 ## STEP 1 — GET CURRENT DATE AND TIME
 Fetch the current UTC time. Determine today's date in EDT (UTC-4) or EST (UTC-5) depending on daylight saving.
 
-## STEP 2 — FOR EACH TEAM MEMBER, GATHER DATA
+## STEP 2 — LOOK UP NOTION USER IDs
+
+Call notion-get-users to retrieve all workspace members. Match each team member by email address to find their Notion user ID:
+- Rachel → rachel@nowtonext.ai
+- Jess → jess@nowtonext.ai
+- Jason → jason@nowtonext.ai
+
+Store each person's Notion user ID. If a match cannot be found for a team member, skip them this run and continue with the others.
+
+## STEP 3 — FOR EACH TEAM MEMBER, GATHER DATA
 
 Process all three team members: Rachel, Jess, Jason.
 
-### 2A — Tasks
-Query the Notion Tasks database (ID: 36e56cd2373b8325939281a80a6cb5d9) for tasks:
-- Assigned to this team member (match by their email or name in the assignee field)
+### 3A — Tasks
+Query the Notion Tasks database (ID: 36e56cd2373b8325939281a80a6cb5d9) filtering by:
+- Assignee Person property = this team member's Notion user ID
 - Due date is within the next 7 days from today
 - Status is NOT Done, Cancelled, or Complete
 Sort by due date ascending.
 
-### 2B — External meetings today
+### 3B — External meetings today
 Search Google Calendar for this person's calendar for events TODAY that:
 - Have at least one attendee whose email domain is NOT @nowtonext.ai
 - Are not all-day events
@@ -49,7 +58,7 @@ Search Google Calendar for this person's calendar for events TODAY that:
 
 For each meeting, search the Notion Prep Guides database for a matching prep guide (search by company name derived from external attendee email domain or meeting title). Note the prep guide URL if found.
 
-## STEP 3 — SEND PERSONALIZED SLACK DM
+## STEP 4 — SEND PERSONALIZED SLACK DM
 
 For each team member: if they have tasks OR meetings, send a DM. If neither, skip silently.
 
@@ -64,5 +73,5 @@ Send each person their own individual DM. Escape all double quotes inside the JS
 ### With tasks only (no meetings):
 "☀️ *Good morning — Tasks due this week*\n\n[bullet list: • [task name] — Due [date]]\n\nNo external meetings today."
 
-## STEP 4 — DONE
+## STEP 5 — DONE
 Stop silently if a person has no tasks and no meetings.
