@@ -39,13 +39,12 @@ Notifications go to each NTN team member who is on the meeting invite.
 
 | Trigger | Window | Message |
 |---|---|---|
-| 48h prep | 47–49 hours before start | Prep guide created — link + attendees |
-| Morning of | 8:00–10:00 AM EST on meeting day | Reminder with Notion link |
+| 48h prep | 47–49 hours before start | Silent — marks `48h_sent` flag only |
 | Pre-meeting | 30–90 minutes before start (~1 hour) | Final alert with Notion link |
 
-**Collision rule:** If a meeting starts during the morning window (e.g. 9am), only the pre-meeting message is sent. Both flags are marked to prevent a duplicate morning send.
+> Morning notifications (tasks + meetings combined) are handled by the **daily-task-roundup** routine, not this one.
 
-Duplicate prevention: sent flags (`48h_sent`, `morning_sent`, `premeet_sent`) are stored in the Notion prep guide's Owner Notes field.
+Duplicate prevention: sent flags (`48h_sent`, `premeet_sent`) are stored in the Notion prep guide's Owner Notes field.
 
 ## Workflow
 
@@ -79,7 +78,7 @@ Creates a new page in the Prep Guides database with a full meeting brief:
 Context pulled from: Google Calendar (attendees), HubSpot (company/deal history), Notion Projects (project page), Granola (prior meeting notes).
 
 ### Step 5 — Send Slack DMs
-Individual DMs to each NTN attendee via Slack bot token (curl). Updates Notion Owner Notes with sent flags after each batch.
+Individual DMs to each NTN attendee via Slack MCP (`slack_send_message`). Updates Notion Owner Notes with sent flags after each send.
 
 ### Step 6 — Silent if nothing to do
 No Slack messages sent when there are no qualifying actions this run.
@@ -99,6 +98,7 @@ No Slack messages sent when there are no qualifying actions this run.
 | Notion | claude.ai Notion MCP |
 | HubSpot | claude.ai HubSpot MCP |
 | Granola | claude.ai Granola MCP |
+| Slack | claude.ai Slack MCP |
 
 ## Notes
 

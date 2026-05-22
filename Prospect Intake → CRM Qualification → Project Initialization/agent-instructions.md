@@ -96,22 +96,13 @@ For emails that pass validation (High or Medium confidence):
 
 ## STEP 4 — SEND SLACK DM
 
-Send a Slack DM to Rachel using the Slack Web API via curl:
+Send a Slack DM to Rachel (U0ACE0F48F6) using the Slack MCP tool (`slack_send_message`).
 
-```
-curl -s -X POST https://slack.com/api/chat.postMessage \
-  -H "Authorization: Bearer <SLACK_BOT_TOKEN>" \
-  -H "Content-Type: application/json" \
-  -d '{"channel": "<RACHEL_SLACK_MEMBER_ID>", "text": "<MESSAGE>"}'
-```
-
-For a successfully created deal, replace <MESSAGE> with:
-'🏢 *New Deal Draft Ready for Review*\n\n*Company:* [company]\n*Contacts:* [names and emails]\n*Service Type:* [type]\n*Deal Stage:* [stage]\n*Owners:* [owners assigned]\n*Meeting Date:* [date or Not found]\n*Confidence:* [High/Medium/Low]\n[any flags or ambiguities]\n\n🔗 View Draft Deal: [hubspot deal URL]'
+For a successfully created deal:
+"🏢 *New Deal Draft Ready for Review*\n\n*Company:* [company]\n*Contacts:* [names and emails]\n*Service Type:* [type]\n*Deal Stage:* [stage]\n*Owners:* [owners assigned]\n*Meeting Date:* [date or Not found]\n*Confidence:* [High/Medium/Low]\n[any flags or ambiguities]\n\n🔗 View Draft Deal: [hubspot deal URL]"
 
 For a skipped deal:
-'⚠️ *Deal Creation Skipped*\n\n*Email:* [subject] from [sender]\n*Reason:* [why]\n*Recommendation:* [what to do manually]'
-
-Escape all double quotes inside the JSON -d string as \".
+"⚠️ *Deal Creation Skipped*\n\n*Email:* [subject] from [sender]\n*Reason:* [why]\n*Recommendation:* [what to do manually]"
 
 ## STEP 5 — MARK EMAIL AS PROCESSED
 

@@ -10,24 +10,13 @@ You are running the Meeting Prep Guide routine. Follow these instructions exactl
 - Jess: jess@nowtonext.ai / Slack U09V5NP3U00
 - Jason: jason@nowtonext.ai / Slack U090GCJNP2N
 
-## SLACK BOT TOKEN
-<SLACK_BOT_TOKEN>
-
 ## NOTION
 - Prep Guides database ID: 74a287e66d934e118e772a07f2e175e7
 - Prep Guides data source: collection://e8aa7033-b4b5-4953-9027-eb0b38605023
 - Projects data source: collection://7fe56cd2-373b-8368-a21c-87f2c9b61ec3
-- Tasks database ID: 36e56cd2373b8325939281a80a6cb5d9
 
 ## SLACK
-Send all Slack messages via curl using the bot token. Do NOT use the Slack MCP tool.
-
-```
-curl -s -X POST https://slack.com/api/chat.postMessage \
-  -H "Authorization: Bearer <SLACK_BOT_TOKEN>" \
-  -H "Content-Type: application/json" \
-  -d '{"channel": "<USER_ID>", "text": "<MESSAGE>"}'
-```
+Send all Slack messages using the Slack MCP tool (`slack_send_message`). Use the Slack user IDs from the TEAM section above.
 
 ## STEP 1 — GET CURRENT TIME
 Fetch the current UTC time. Determine current time in EDT (UTC-4) or EST (UTC-5) depending on daylight saving.
@@ -79,12 +68,7 @@ Now evaluate each meeting. Collect actions into lists — do NOT send Slack yet.
 
   **48h flag** (Owner Notes does NOT contain "48h_sent") → update Owner Notes to add "48h_sent" now, silently. Do NOT send any Slack notification.
 
-  **Morning notification** (meeting day AND 8:00–10:00 AM EST AND Owner Notes does NOT contain "morning_sent") → add to **morning**
-
   **Pre-meeting** (starts in 30–90 min AND Owner Notes does NOT contain "premeet_sent") → add to **premeet**
-
-### COLLISION RULE
-If a meeting is in both **morning** and **premeet**: remove from morning, keep in premeet. Mark both flags after sending.
 
 ## STEP 5 — MATCH TO NOTION PROJECT
 (Only for meetings in the create_list)
@@ -141,40 +125,19 @@ Page body:
 
 Mark sections TBD if unavailable. Save the Notion URL.
 
-If creation fails for any meeting, send a Slack DM to Rachel (U0ACE0F48F6):
+If creation fails for any meeting, send a Slack DM to Rachel (U0ACE0F48F6) via slack_send_message:
 "⚠️ Failed to create prep guide for [Company] — [meeting title]. Error: [error message]"
 
-## STEP 7 — SEND CONSOLIDATED SLACK DMs
+## STEP 7 — SEND PRE-MEETING REMINDERS
 
-Send to each relevant NTN team member via curl (Rachel always; Jess if on meeting; Jason if on meeting). Escape all double quotes inside the JSON -d string as \".
+Send to each relevant NTN team member via slack_send_message (Rachel always; Jess if on meeting; Jason if on meeting).
 
-### 7A — Morning (morning list)
-
-Before building the morning message for each NTN team member, query the Notion Tasks database (ID: 36e56cd2373b8325939281a80a6cb5d9) for tasks:
-- Assigned to that team member (match by their email address or name in the assignee field)
-- Due date is within the next 7 days from today
-- Status is NOT Done, Cancelled, or Complete
-
-Sort by due date ascending. If no tasks are found, show "No tasks due this week."
-
-ONE meeting:
-```
-☀️ *Meeting Today — Prep Reminder*\n\n*Meeting:* [title]\n*Time:* [time EST]\n*External:* [names and emails]\n\n🔗 [Notion prep guide URL]\n\n*Tasks due this week:*\n[bullet list: • [task name] — Due [date], or "No tasks due this week."]
-```
-
-TWO OR MORE on same date:
-```
-☀️ *Meetings Today — [Date]*\n\n1. *[Meeting 1 title]* — [time EST] | 🔗 [Notion URL]\n2. *[Meeting 2 title]* — [time EST] | 🔗 [Notion URL]\n\n*Tasks due this week:*\n[bullet list: • [task name] — Due [date], or "No tasks due this week."]
-```
-
-After sending, update Owner Notes to add "morning_sent".
-
-### 7B — Pre-meeting (premeet list)
+### Pre-meeting (premeet list)
 Always individual:
 ```
 ⏰ *Starting in ~1 hour: [meeting title]*\n\n*Time:* [time EST]\n*External:* [names]\n\n🔗 [Notion prep guide URL]
 ```
-After sending, update Owner Notes to add "premeet_sent" (and "morning_sent" if collision rule applied).
+After sending, update Owner Notes to add "premeet_sent".
 
 ## STEP 8 — DONE
 If no actions were needed this run, stop silently.
