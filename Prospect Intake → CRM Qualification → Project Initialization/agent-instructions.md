@@ -85,7 +85,7 @@ For emails that pass validation (High or Medium confidence):
    - If it does not exist: create the deal in the default deals pipeline at stage 'Initial Meeting Scheduled', and add a note to the deal: 'PENDING REVIEW — created by automated routine, awaiting approval before activation'
 
 2. Set these deal fields:
-   - Deal name: [Company Name] — [Service Type] — [Date]
+   - Deal name: [Company Name] — [Service Type]
    - Associated company: the identified company
    - Associated contacts: all identified external contacts
    - Deal owner: Rachel at minimum (plus Jess/Jason if present in thread)
