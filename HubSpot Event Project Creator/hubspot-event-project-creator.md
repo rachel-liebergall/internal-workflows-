@@ -62,6 +62,11 @@ For each deal with no existing Notion project, create a new page in the Projects
 
 Store the returned Notion page URL for the Slack summary.
 
+**4B — Write Notion project URL back to HubSpot deal**
+After creating the Notion project, update the HubSpot deal using manage_crm_objects:
+- Deal ID: [hs_object_id]
+- Property: `notion_project_url` = [returned Notion page URL]
+
 ## STEP 5 — SEND SLACK SUMMARY TO RACHEL
 Send a DM to Rachel (U0ACE0F48F6):
 
