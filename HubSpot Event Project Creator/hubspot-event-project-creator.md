@@ -39,20 +39,26 @@ No deals with events in the next 4 weeks. Nothing to create."
 Then stop.
 
 ## STEP 3 — CHECK FOR EXISTING NOTION PROJECTS
-For each qualifying deal:
-1. Use notion-search to search for the deal name.
-2. Check whether any result is a page in the Projects database (15456cd2373b82e2bca10190134ace79).
-3. If a match is found → mark as "already exists," skip creation.
-4. If no match → proceed to Step 4.
+For each qualifying deal, run both checks and skip if either finds a match:
+1. **HubSpot field check** — if the deal already has `notion_project_url` set, a project exists. Skip.
+2. **Notion search** — use notion-search for the deal name and check whether any result is a page in the Projects database (15456cd2373b82e2bca10190134ace79). If a match is found, skip.
+
+If neither check finds a match → proceed to Step 4.
 
 ## STEP 4 — CREATE NOTION PROJECTS
 For each deal with no existing Notion project, create a new page in the Projects database (15456cd2373b82e2bca10190134ace79) using notion-create-pages:
+
+Determine Tags from the deal's service_type:
+- "Build" or "The Build" → ["Client Delivery", "The Build"]
+- "Signal" or "The Signal" → ["The Signal"]
+- "Room" or "The Room" → ["The Room"]
+- "General" or not set → ["Client Delivery"]
 
 - **Project Name**: [dealname]
 - **Timeline**: start = today's date, end = event_date
   (This sets the project window from today to the event date.)
 - **Status**: "Not started"
-- **Tags**: ["Events"]
+- **Tags**: [as determined above]
 - **Notes (migrated)**:
   HubSpot Deal: [full deal URL]
   Event Date: [event_date]
