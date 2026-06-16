@@ -49,7 +49,7 @@ Duplicate prevention: sent flags (`48h_sent`, `premeet_sent`) are stored in the 
 ## Workflow
 
 ### Step 1 — Get current time
-Fetches UTC time and converts to EST/EDT.
+Fetches UTC time for use in notification window calculations. Meeting times in messages are parsed from the local time embedded in each event's ISO 8601 datetime string, so each person sees times in their own timezone.
 
 ### Step 2 — Fetch upcoming external meetings
 Scans all three team calendars for the next 4 days. Filters to external meetings. Deduplicates meetings that appear on multiple calendars.
