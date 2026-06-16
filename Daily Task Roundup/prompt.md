@@ -33,7 +33,10 @@ Send all Slack messages using the Slack MCP tool (slack_send_message). Send as D
 Format task links using Slack's hyperlink syntax: <https://notion.so/PAGE_ID|Task Name>
 
 ## STEP 1 — GET CURRENT DATE AND TIME
-Fetch the current UTC time. Determine today's date in EDT (UTC-4) or EST (UTC-5) depending on daylight saving.
+Fetch the current UTC time. Determine today's date and the active timezone offset:
+- US EDT (UTC-4) is in effect from the second Sunday in March through the first Sunday in November.
+- US EST (UTC-5) is in effect all other times.
+Store the offset and the label ("EDT" or "EST") — use it consistently for all time displays throughout the run.
 
 ## STEP 2 — LOOK UP NOTION USER IDs AND HUBSPOT OWNER IDs
 
@@ -93,6 +96,8 @@ Search Google Calendar for this person's calendar for events TODAY that:
 - Are not all-day events
 - Have a defined start time
 
+Convert each meeting's start time from UTC to local time using the offset determined in Step 1. Display as 12-hour time with the EDT/EST label (e.g. "10:00 AM EDT"). Do not display times in UTC.
+
 For each meeting, search the Notion Prep Guides database for a matching prep guide (search by company name derived from external attendee email domain or meeting title). Note the prep guide URL if found.
 
 ### 3E — Ongoing tasks (always)
@@ -142,7 +147,7 @@ Section order in every message:
 "☀️ *Good morning — Here's your day*
 
 *Meetings today:*
-[numbered list: N. *[title]* — [time EST]
+[numbered list: N. *[title]* — [time EDT or EST, whichever applies]
    External: [names]
    🔗 [prep guide URL or 'Prep guide not yet created']]
 
