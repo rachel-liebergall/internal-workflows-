@@ -34,11 +34,12 @@ Scans the **Nowtonext** enterprise workspace (ID: `711732b8-9958-4c2c-9427-572bc
 Calls `list_meetings` with `time_range="last_1_day"` and `list_meeting_folders` for folder names. Filters to the Nowtonext workspace only.
 
 ### Step 2 — Skip already-synced meetings
-For each meeting, checks:
+For each meeting, runs three checks and skips if **any** matches:
 1. **Transcript Link match** — existing row whose Transcript Link contains the Granola meeting ID
 2. **Title match** — existing row with the same title
+3. **Date + attendee overlap** — queries rows with the same date; if any row already has at least one matching external attendee (non-@nowtonext.ai), skips as a duplicate
 
-Skips if either check matches. Prevents duplicates even if a meeting was captured by another workflow.
+Check 3 handles the case where the same physical meeting generates separate Granola entries for multiple NTN participants.
 
 ### Step 3 — Get full meeting details
 Retrieves AI summary, action items, participants, transcript URL, and folder/subfolder. Skips meetings with no AI summary (not yet complete).
