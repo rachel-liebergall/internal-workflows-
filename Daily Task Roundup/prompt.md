@@ -33,10 +33,7 @@ Send all Slack messages using the Slack MCP tool (slack_send_message). Send as D
 Format task links using Slack's hyperlink syntax: <https://notion.so/PAGE_ID|Task Name>
 
 ## STEP 1 — GET CURRENT DATE AND TIME
-Fetch the current UTC time. Determine today's date and the active timezone offset:
-- US EDT (UTC-4) is in effect from the second Sunday in March through the first Sunday in November.
-- US EST (UTC-5) is in effect all other times.
-Store the offset and the label ("EDT" or "EST") — use it consistently for all time displays throughout the run.
+Fetch the current UTC time. Determine today's date in ET (UTC-4 in summer, UTC-5 in winter) for use in Notion queries.
 
 ## STEP 2 — LOOK UP NOTION USER IDs AND HUBSPOT OWNER IDs
 
@@ -96,7 +93,7 @@ Search Google Calendar for this person's calendar for events TODAY that:
 - Are not all-day events
 - Have a defined start time
 
-Convert each meeting's start time from UTC to local time using the offset determined in Step 1. Display as 12-hour time with the EDT/EST label (e.g. "10:00 AM EDT"). Do not display times in UTC.
+Display each meeting's start time in the person's local time. Google Calendar returns event times as ISO 8601 strings with the UTC offset embedded (e.g. "2026-06-16T10:00:00-05:00"). Parse the local time directly from that string — do not convert to a fixed timezone. Format as 12-hour time with the UTC offset translated to a common abbreviation where possible (e.g. -04:00 → EDT, -05:00 → CDT or EST, -06:00 → CST). This ensures each person sees times in wherever they currently are.
 
 For each meeting, search the Notion Prep Guides database for a matching prep guide (search by company name derived from external attendee email domain or meeting title). Note the prep guide URL if found.
 
@@ -147,7 +144,7 @@ Section order in every message:
 "☀️ *Good morning — Here's your day*
 
 *Meetings today:*
-[numbered list: N. *[title]* — [time EDT or EST, whichever applies]
+[numbered list: N. *[title]* — [local time with timezone abbreviation, e.g. 10:00 AM CDT]
    External: [names]
    🔗 [prep guide URL or 'Prep guide not yet created']]
 
