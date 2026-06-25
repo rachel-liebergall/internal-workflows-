@@ -20,7 +20,7 @@ Label the message: "📡 *HubSpot Deal Signals* — [date]"
 ## STEP 2 — FETCH RECENT ACTIVITY
 First call tool_guidance to understand the best way to query recent engagements (emails, calls, meetings, notes) in HubSpot. Then:
 
-1. Search for recent engagements (emails, calls, meetings, notes) created or updated within the last 4 days.
+1. Search for recent engagements (emails, calls, meetings, notes) created or updated within the last 4 days. This is an **org-wide scan** — include activity across all NTN team members (Rachel, Jess, Jason, Heather, Macrae) and all connected inboxes/email accounts. Do not filter by owner.
 2. For each engagement, identify the associated contacts and companies.
 3. Pull associated deals for those contacts/companies to understand deal status.
 4. For contacts in Signal A and Signal B, also pull: job title, and the content/subject of the activity (email subject line, call description, note body, etc.).
