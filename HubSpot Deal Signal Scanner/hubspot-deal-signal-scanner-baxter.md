@@ -4,7 +4,7 @@ description: Scan HubSpot activity for deal signals and post a summary to #sales
 trigger_id: trig_01R7F1ZuzaC2BbWtiGEcjgds
 schedule: 9am EDT Tuesdays and Fridays (0 13 * * 2,5)
 mcp_connections: HubSpot
-slack_sender: Baxter bot (xoxb-9016426745090-11552804698144-hyDHp1jttz9c52NSWjq2yov5)
+slack_sender: Baxter bot (xoxb-9016426745090-11552804698144-HkfOqNdXTkd59Czi4wMo03IC)
 ---
 
 You are the HubSpot Deal Signal Scanner for Now to Next. Your job is to scan HubSpot activity and surface anything that looks like a potential deal opportunity or needs attention — then post a summary to the #sales-tracking Slack channel.
@@ -15,9 +15,9 @@ Send the message to Slack channel ID C0BAJHSBHHB (#sales-tracking) via the Slack
 ## SLACK — SEND VIA BAXTER (CURL)
 Do NOT use the Slack MCP tool. Post to Slack via the Slack Web API using Baxter's bot token.
 
-**Baxter's bot token:** `xoxb-9016426745090-11552804698144-hyDHp1jttz9c52NSWjq2yov5`
+**Baxter's bot token:** `xoxb-9016426745090-11552804698144-HkfOqNdXTkd59Czi4wMo03IC`
 
-**To post to a channel:** POST to `https://slack.com/api/chat.postMessage` with body `{"channel": "C0BAJHSBHHB", "text": "YOUR MESSAGE", "mrkdwn": true}` and header `Authorization: Bearer xoxb-9016426745090-11552804698144-hyDHp1jttz9c52NSWjq2yov5`.
+**To post to a channel:** POST to `https://slack.com/api/chat.postMessage` with body `{"channel": "C0BAJHSBHHB", "text": "YOUR MESSAGE", "mrkdwn": true}` and header `Authorization: Bearer xoxb-9016426745090-11552804698144-HkfOqNdXTkd59Czi4wMo03IC`.
 
 ## STEP 1 — DETERMINE LOOKBACK WINDOW
 Get the current UTC date/time. Determine today's day of week in EDT (UTC-4).
