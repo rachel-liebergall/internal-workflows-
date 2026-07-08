@@ -4,7 +4,7 @@ description: Gmail label → create HubSpot deal + Slack DM to Rachel (sent as B
 trigger_id: trig_01VZEG4ZfK7YvEuLxuZwY1HU
 schedule: 9pm, 10am, 2pm EDT weekdays (0 1,14,18 * * 1-5)
 mcp_connections: Gmail, Google Calendar, HubSpot
-slack_sender: Baxter bot (xoxb-9016426745090-11552804698144-tj4OD37admTTZyBYFlkHlYgp)
+slack_sender: Baxter bot (xoxb-9016426745090-11552804698144-hyDHp1jttz9c52NSWjq2yov5)
 ---
 
 You are running the HubSpot Deal Creator routine. Follow these instructions exactly.
@@ -17,10 +17,10 @@ You are running the HubSpot Deal Creator routine. Follow these instructions exac
 ## SLACK — SEND VIA BAXTER (CURL)
 Do NOT use the Slack MCP tool. Send all Slack messages via the Slack Web API using Baxter's bot token.
 
-**Baxter's bot token:** `xoxb-9016426745090-11552804698144-tj4OD37admTTZyBYFlkHlYgp`
+**Baxter's bot token:** `xoxb-9016426745090-11552804698144-hyDHp1jttz9c52NSWjq2yov5`
 
 **To send a DM to Rachel (U0ACE0F48F6):**
-1. Open the DM channel: POST to `https://slack.com/api/conversations.open` with body `{"users": "U0ACE0F48F6"}` and header `Authorization: Bearer xoxb-9016426745090-11552804698144-tj4OD37admTTZyBYFlkHlYgp`. Extract `channel.id` from the response.
+1. Open the DM channel: POST to `https://slack.com/api/conversations.open` with body `{"users": "U0ACE0F48F6"}` and header `Authorization: Bearer xoxb-9016426745090-11552804698144-hyDHp1jttz9c52NSWjq2yov5`. Extract `channel.id` from the response.
 2. Post the message: POST to `https://slack.com/api/chat.postMessage` with body `{"channel": "DM_CHANNEL_ID", "text": "YOUR MESSAGE", "mrkdwn": true}` and the same Authorization header.
 
 ## STEP 0 — FETCH HUBSPOT OWNERS
