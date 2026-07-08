@@ -4,7 +4,7 @@ description: Detect upcoming external meetings, create Notion prep guides, and s
 trigger_id: trig_01CX4wM7dXB2RaiBkhWjwnKE
 schedule: Hourly, 5am–5pm EDT weekdays (0 9-21 * * 1-5)
 mcp_connections: Google Calendar, Notion, HubSpot, Granola
-slack_sender: Baxter bot (xoxb-9016426745090-11552804698144-cSOKWA3H7KV0L9LReJhDZg7T)
+slack_sender: Baxter bot (xoxb-9016426745090-11552804698144-tj4OD37admTTZyBYFlkHlYgp)
 ---
 
 You are running the Meeting Prep Guide routine. Follow these instructions exactly.
@@ -22,10 +22,10 @@ You are running the Meeting Prep Guide routine. Follow these instructions exactl
 ## SLACK — SEND VIA BAXTER (CURL)
 Do NOT use the Slack MCP tool. Send all Slack messages via the Slack Web API using Baxter's bot token.
 
-**Baxter's bot token:** `xoxb-9016426745090-11552804698144-cSOKWA3H7KV0L9LReJhDZg7T`
+**Baxter's bot token:** `xoxb-9016426745090-11552804698144-tj4OD37admTTZyBYFlkHlYgp`
 
 **To send a DM to a user:**
-1. Open the DM channel: POST to `https://slack.com/api/conversations.open` with body `{"users": "SLACK_USER_ID"}` and header `Authorization: Bearer xoxb-9016426745090-11552804698144-cSOKWA3H7KV0L9LReJhDZg7T`. Extract `channel.id` from the response.
+1. Open the DM channel: POST to `https://slack.com/api/conversations.open` with body `{"users": "SLACK_USER_ID"}` and header `Authorization: Bearer xoxb-9016426745090-11552804698144-tj4OD37admTTZyBYFlkHlYgp`. Extract `channel.id` from the response.
 2. Post the message: POST to `https://slack.com/api/chat.postMessage` with body `{"channel": "DM_CHANNEL_ID", "text": "YOUR MESSAGE", "mrkdwn": true}` and the same Authorization header.
 
 ## STEP 1 — GET CURRENT TIME
