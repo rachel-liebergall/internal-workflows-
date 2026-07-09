@@ -56,12 +56,15 @@ For each of the five team members:
 
 If no check-in message is found for today, skip this person entirely.
 
-## STEP 4 — READ THREAD REPLIES
+## STEP 4 — READ REPLIES AND MESSAGES
 
-For each person whose check-in message was found:
-1. GET conversations.replies with the channel_id and the check-in message ts.
-2. Filter to messages from the team member (not from the bot).
-3. If no replies from the team member exist, skip this person.
+For each person whose check-in message was found, collect messages from TWO sources:
+
+**4A — Thread replies:** GET conversations.replies with the channel_id and the check-in message ts. Filter to messages from the team member (not from the bot).
+
+**4B — DM channel messages after check-in:** GET conversations.history for the channel_id. Filter to messages from the team member where the message `ts` is greater than the check-in message `ts`. Exclude any messages whose `thread_ts` matches the check-in message ts (those are already captured in 4A).
+
+Combine all messages from 4A and 4B into a single list. If no messages from the team member exist in either source, skip this person.
 
 ## STEP 5 — RE-QUERY NOTION TASKS
 
