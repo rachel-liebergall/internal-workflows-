@@ -134,11 +134,13 @@ If no HubSpot owner ID found for this person, skip this step.
 For each team member: send a DM if they have ANY of the following: overdue tasks, this-week tasks, next-week tasks, ongoing tasks, meetings, or HubSpot deal tasks. Only skip silently if all sections are empty.
 
 Format overdue tasks as: • ⚠️ [Project] <[notion page URL]|[task name]> — Due [date] *(overdue)*
-Format upcoming tasks as: • [Project] <[notion page URL]|[task name]> — Due [date]
-Format ongoing tasks as: • [Project] <[notion page URL]|[task name]>
-Format HubSpot tasks as: • *[Deal Name]* — [Task Subject] — Due [date] (or no due date if not set)
+Format overdue tasks with project prefix: `*[project name]* · ` if a project is linked, or omit prefix if no project.
 
-Where [Project] = `*[project name]* · ` if a project is linked, or omitted entirely if no project.
+Format tasks due this week **grouped by project**: list each project as a bold header (`*[Project Name]*`), then indent each task beneath it as `  • <[notion page URL]|[task name]> — Due [date]`. Tasks with no project go under a final group with no header (just the bullet). Sort groups alphabetically by project name; tasks within each group sort by effective due date ascending.
+
+Format ongoing tasks as: • [Project] <[notion page URL]|[task name]>
+Format ongoing tasks with project prefix: `*[project name]* · ` if a project is linked, or omit prefix if no project.
+Format HubSpot tasks as: • *[Deal Name]* — [Task Subject] — Due [date] (or no due date if not set)
 
 Section order in every message:
 1. Meetings today (if any)
@@ -160,8 +162,11 @@ Section order in every message:
 • ⚠️ <https://notion.so/def|Send follow-up email> — Due Jun 2 *(overdue)*
 
 *Tasks due this week:*
-• *The Room* · <https://notion.so/ghi|Draft agenda> — Due Jun 6
-• <https://notion.so/jkl|Review contract> — Due Jun 7
+*The Room*
+  • <https://notion.so/ghi|Draft agenda> — Due Jun 6
+  • <https://notion.so/stu|Finalize run of show> — Due Jun 8
+*Operations*
+  • <https://notion.so/jkl|Review contract> — Due Jun 7
 
 *Ongoing:*
 • *Operations* · <https://notion.so/mno|Weekly reporting>
