@@ -38,6 +38,23 @@ Search Gmail for emails with the label 'hubspot opp creation' that do NOT have t
 
 If no emails are found, stop here. Do not send a Slack message.
 
+## STEP 1B — SUPPLEMENT WITH SALES TRACKING CONTEXT (if email is sparse)
+
+For each email found in Step 1, assess whether it contains:
+- At least one clearly identifiable external contact (name + email address)
+- A clearly identifiable company
+
+If the email is sparse on either front, scan the #sales-tracking Slack channel for additional context before proceeding:
+
+```
+curl -s "https://slack.com/api/conversations.history?channel=C0BAJHSBHHB&limit=100" \
+  -H "Authorization: Bearer $BAXTER_TOKEN"
+```
+
+Look for deal scanner posts (sent by Baxter) mentioning the same company name, domain, or contact names as the triggering email. Extract any contacts surfaced in Signal A or Signal B sections (name, job title, company). Use these to supplement Step 2's contact identification.
+
+If no matching context found in #sales-tracking, proceed with what is available from the email and flag the gap in the confidence assessment.
+
 ## STEP 2 — FOR EACH EMAIL, RUN THE DEAL CREATION WORKFLOW
 
 For each matching email, execute the following workflow in full:
@@ -130,11 +147,17 @@ After each association attempt, confirm it succeeded (e.g. by checking the respo
 Do not move to Step 4C until all associations here are complete or confirmed failed.
 
 ### 4C — Associate all existing email engagements (REQUIRED)
-Using the engagement fetch and association method from Step 0's tool_guidance:
+
 For each contact_id:
-1. Fetch all existing email engagements on that contact's timeline.
-2. For each engagement, create an association between the engagement and deal_id.
-Process in batches of 10 if there are many engagements.
+1. Search for emails using `search_crm_objects` with objectType `emails` and an `associatedWith` filter targeting that contact. Use limit 100 and paginate if total > 100.
+2. Collect all returned email IDs.
+3. Associate each batch of up to 10 email IDs with the deal using `manage_crm_objects` updateRequest:
+   - objectType: "deals", objectId: [deal_id]
+   - associations: [{targetObjectId: [email_id], targetObjectType: "emails"}]
+   - **Maximum 10 associations per call — batching is required.** Exceeding 10 will error.
+4. After each batch, verify the response summary shows 0 failed. If any fail, retry once, then note the failure in the Slack DM and continue.
+
+Important: use objectType `emails` (not `engagements`) — `engagements` is not a supported search type.
 
 ### 4D — Log the triggering email as a HubSpot engagement
 Create an email engagement with subject, body, from, to, and timestamp. Associate with deal_id, company_id, and all contact_ids.
