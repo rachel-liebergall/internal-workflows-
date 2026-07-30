@@ -23,9 +23,14 @@ Do NOT use the Slack MCP tool. Send all Slack messages via the Slack Web API usi
 1. Open the DM channel: POST to `https://slack.com/api/conversations.open` with body `{"users": "U0ACE0F48F6"}` and header `Authorization: Bearer $BAXTER_TOKEN`. Extract `channel.id` from the response.
 2. Post the message: POST to `https://slack.com/api/chat.postMessage` with body `{"channel": "DM_CHANNEL_ID", "text": "YOUR MESSAGE", "mrkdwn": true}` and the same Authorization header.
 
-## STEP 0 — FETCH HUBSPOT OWNERS
+## STEP 0 — TOOL GUIDANCE AND FETCH HUBSPOT OWNERS
 
-Before processing any emails, fetch the full list of HubSpot owners. There are exactly three: Rachel, Jess, and Jason. Match them by first name (Rachel, Jess, Jason) and store their HubSpot owner IDs for use when creating deals. If the fetch fails, proceed anyway and attempt to assign owners by name when creating the deal.
+Before processing any emails, call tool_guidance with these specific questions and store the answers for use in Steps 3B, 4B, and 4C:
+1. How do I create an association between a deal and a company using the available tools?
+2. How do I create an association between a deal and a contact?
+3. How do I fetch existing email engagements on a contact's timeline and associate them with a deal?
+
+Then fetch the full list of HubSpot owners. There are exactly three: Rachel, Jess, and Jason. Match them by first name (Rachel, Jess, Jason) and store their HubSpot owner IDs for use when creating deals. If the fetch fails, proceed anyway and attempt to assign owners by name when creating the deal.
 
 ## STEP 1 — FIND EMAILS TO PROCESS
 
@@ -115,15 +120,21 @@ For each identified external contact:
    - Service type: Signal / Room / Build / General
 3. Store the returned deal_id and deal URL.
 
-### 4B — Create associations (REQUIRED)
-After creating the deal:
-1. Associate the deal with the company.
-2. Associate the deal with each contact.
+### 4B — Create associations (REQUIRED — do not skip or defer)
+Immediately after creating the deal, using the association method from Step 0's tool_guidance:
+1. Create a deal-to-company association: associate deal_id with company_id.
+2. For each contact_id: create a deal-to-contact association: associate deal_id with that contact_id.
+
+After each association attempt, confirm it succeeded (e.g. by checking the response or re-fetching the deal's associations). If any association fails, retry once. If it still fails, note the failure in the Slack DM but continue processing.
+
+Do not move to Step 4C until all associations here are complete or confirmed failed.
 
 ### 4C — Associate all existing email engagements (REQUIRED)
+Using the engagement fetch and association method from Step 0's tool_guidance:
 For each contact_id:
-1. Fetch all engagements of type EMAIL on that contact's timeline.
-2. Associate all with deal_id in batches of 10.
+1. Fetch all existing email engagements on that contact's timeline.
+2. For each engagement, create an association between the engagement and deal_id.
+Process in batches of 10 if there are many engagements.
 
 ### 4D — Log the triggering email as a HubSpot engagement
 Create an email engagement with subject, body, from, to, and timestamp. Associate with deal_id, company_id, and all contact_ids.
