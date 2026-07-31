@@ -1,0 +1,21 @@
+{
+  "name": "hubspot-notion-custom-code",
+  "version": "1.0.0",
+  "description": "HubSpot custom code action that creates Notion Sales Opportunities pages.",
+  "main": "hubspot-custom-code.js",
+  "scripts": {
+    "check": "node --check hubspot-custom-code.js"
+  },
+  "keywords": [
+    "hubspot",
+    "notion",
+    "custom-code",
+    "workflow"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {},
+  "engines": {
+    "node": ">=18"
+  }
+}
