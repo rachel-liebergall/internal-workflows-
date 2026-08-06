@@ -73,23 +73,35 @@ For each person with at least one task from 3A, 3B, or 3C: send a Slack DM.
 **CRITICAL: The message must start with this exact header:**
 `🔔 *End-of-day check-in — [DATE formatted as e.g. Jun 8]*`
 
-Full message format:
+Format overdue tasks as: `• ⚠️ *[project name]* · <url|[task name]> — Due [date] *(overdue)*`. Omit project prefix if no project linked.
+
+Format tasks due this week **grouped by project**: bold project header (`*[Project Name]*`), then each task indented as `  • <url|[task name]> — Due [date]`. Tasks with no project go last with no header. Sort groups alphabetically; tasks within each group by effective due date ascending.
+
+Format ongoing tasks as: `• *[project name]* · <url|[task name]>`. Omit project prefix if no project linked.
+
+Section order: Overdue → Tasks due this week → Ongoing. Omit any section with no items.
+
+### Full example format:
 ```
 🔔 *End-of-day check-in — Jun 8*
 
 Hey [first name]! How did today go? Reply in this thread with a quick update on any of these — *done*, *still working on it*, or what's blocking you.
 
 ⚠️ *Overdue:*
-• ⚠️ *[Project]* · <https://notion.so/[id]|[Task Name]> — Due [date]
+• ⚠️ *BCBSA* · <https://notion.so/abc|Finalize slide deck> — Due Jun 1 *(overdue)*
+• ⚠️ <https://notion.so/def|Send follow-up email> — Due Jun 2 *(overdue)*
 
-*Active tasks:*
-• *[Project]* · <https://notion.so/[id]|[Task Name]> — Due [date]
+*Tasks due this week:*
+*The Room*
+  • <https://notion.so/ghi|Draft agenda> — Due Jun 6
+  • <https://notion.so/stu|Finalize run of show> — Due Jun 8
+*Operations*
+  • <https://notion.so/jkl|Review contract> — Due Jun 7
 
 *Ongoing:*
-• *[Project]* · <https://notion.so/[id]|[Task Name]>
+• *Operations* · <https://notion.so/mno|Weekly reporting>
+• <https://notion.so/pqr|Monitor pipeline>
 ```
-
-Omit any section with no items. Omit project prefix if no project linked.
 
 ## STEP 5 — DONE
 Skip silently any team member with no tasks.
