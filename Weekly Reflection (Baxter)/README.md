@@ -4,9 +4,10 @@ Updated: 2026-10-11
 ## Current status
 The Slack-hosted application update has been deployed. A restricted live DM pilot previously verified incoming Slack message → OpenAI Managed Agent → Baxter bot reply.
 The hosted administration check now verifies Baxter's bot identity, the internal participant roster and datastore configuration. Slack workflow tokens omit the optional bot_id field; the check verifies the known Baxter identity and workspace instead.
-The weekly team rollout is still disabled while the hosted Notion credential, runtime listeners and reporting path are verified. Deployment does not mean team-wide automation is active.
+Team mode is enabled as of October 11, 2026. The hosted bot identity, participant roster, isolated session and thread listener, bot reply, long-pause resumption, managed-agent report generation, and Notion report write/readback checks passed. The temporary test report was archived and its listener removed.
+The first team prompts are scheduled for October 16 at 2 p.m. Eastern. Collection closes October 19 at 9 a.m.; the report runs at 10 a.m. The weekly schedules were read back from Slack with America/New_York timezone.
 
-This document supersedes the earlier two-routine Claude setup. The two existing weekly-reflection prompt files are historical references; do not activate their old schedules alongside this implementation.
+This document supersedes the earlier two-routine Claude setup. The two existing weekly-reflection prompt files now contain retirement notices pointing here; do not activate their old schedules alongside this implementation.
 
 ## Weekly flow
 - Friday 2 p.m., America/New_York: snapshot active internal teammates and send the reflection questions in individual Baxter DMs.
@@ -31,7 +32,7 @@ Voice notes require a short text summary; automatic audio transcription is not i
 ## Architecture
 Slack hosts event reception, durable workflow state and scheduling. OpenAI Managed Agents hosts conversation execution. Notion holds the combined report.
 Use Baxter bot authorization only. Personal Slack OAuth and personal Slack MCP are excluded. Each participant/week has a separate session and authorized thread.
-The Slack relay checks workspace, participant, channel, thread and cutoff before handing off input. Agent instructions restrict outbound replies to the same thread; live behavioral verification remains required.
+The Slack relay checks workspace, participant, channel, thread and cutoff before handing off input. Agent instructions restrict outbound replies to the same thread; the hosted synthetic check verified that behavior.
 After a long pause, a new hosted sandbox can restore context from that participant's recorded thread. No conversation polling timer is used.
 
 ## Report
@@ -56,8 +57,10 @@ Disable the broad pilot listener before enabling team routing. Create exactly on
 To stop the rollout, set TEAM_ENABLED false; keep older sender/polling/report routines paused.
 
 ## Validation
-Thirteen automated tests passed for identity/conversation boundaries, errors, local time and DST, roster exclusions, event idempotency, prompt recovery, pagination, cutoff/late edits, duplicate report rows, retry behavior and verified completion.
+Fourteen automated tests passed for identity/conversation boundaries, errors, local time and DST, roster exclusions, event idempotency, prompt recovery, pagination, cutoff/late edits, duplicate report rows, retry behavior and verified completion.
 Slack manifest validation required unique workflow and function callback IDs and nonempty administrative trigger values; these were corrected during deployment.
+The report-analysis session supplies its evidence as initial input at creation, as required by conversation-only managed-agent sessions. A regression test verifies that the evidence is submitted once. Workflow-token identity checks verify the known Baxter user and workspace rather than requiring the optional bot_id field.
+The old broad DM pilot listener was removed and its feature flag disabled before team mode was enabled.
 
 ## Repository scope
 This repository is public. It contains sanitized operating notes only: no tokens, internal workspace/channel/session IDs, participant transcripts or private Notion links. Account-specific configuration and implementation are retained in the authorized operational workspace.
