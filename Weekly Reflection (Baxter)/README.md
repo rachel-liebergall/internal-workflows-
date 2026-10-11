@@ -1,83 +1,64 @@
-# Weekly Reflection (Baxter)
+# Baxter weekly reflection — Slack and OpenAI
+Updated: 2026-10-11
 
-A two-routine system that collects weekly reflections from each team member via Slack DM every Friday, then synthesizes patterns and delivers a report to Rachel every Monday.
+## Current status
+The Slack-hosted application update has been deployed. A restricted live DM pilot previously verified incoming Slack message → OpenAI Managed Agent → Baxter bot reply.
+The hosted administration check now verifies Baxter's bot identity, the internal participant roster and datastore configuration. Slack workflow tokens omit the optional bot_id field; the check verifies the known Baxter identity and workspace instead.
+The weekly team rollout is still disabled while the hosted Notion credential, runtime listeners and reporting path are verified. Deployment does not mean team-wide automation is active.
 
-## What It Does
+This document supersedes the earlier two-routine Claude setup. The two existing weekly-reflection prompt files are historical references; do not activate their old schedules alongside this implementation.
 
-**Friday (Send) —** Baxter DMs every active team member five reflection questions at 3pm EDT. Team members can respond in the thread with text or a Slack voice message.
+## Weekly flow
+- Friday 2 p.m., America/New_York: snapshot active internal teammates and send the reflection questions in individual Baxter DMs.
+- On each reply in the reflection thread: immediately continue that participant's separate weekly conversation. One question at a time, at most three follow-ups, then a summary they can confirm or correct.
+- Monday 9 a.m. Eastern: exclusive response cutoff; capture the recorded reflection threads.
+- Monday 10 a.m. Eastern: generate the combined report in the Weekly Reflection Reports Notion table.
 
-**Monday (Report) —** Baxter reads all DM threads from the weekend, synthesizes patterns across the team, emails Rachel a formatted report, and saves a row to the Weekly Reflection Reports Notion database.
+Use the IANA timezone so daylight-saving changes preserve local times. No email delivery is part of the selected flow.
 
-The report surfaces:
-- Shared patterns across team responses
-- What's working and what to protect
-- Friction and blockers
-- Overlapping work / coordination opportunities
-- AI opportunity signals (repeatable tasks AI could automate)
-- New offering or client opportunity signals
-- Individual highlights per respondent
-- Non-responders and voice message flags
-
-## Reflection Questions Sent
-
+## Questions
 1. What took most of your time this week? Was it worth it?
-2. Where did you feel real momentum?
+2. Where did you feel real momentum — something that moved faster or better than expected?
 3. Where did you feel stuck, spinning, or going in circles?
 4. What pattern are you noticing — in your work, a client situation, or the team?
 5. One thing you'd do differently next week.
 
-## Notion Output
+## Participants and trust
+Include active internal members, including founders and the workflow owner. Exclude bots, deleted accounts, apps, guests and service accounts.
+The invitation discloses that the workflow owner receives named summaries and team patterns. Nonresponse is not an employee performance measure.
+Voice notes require a short text summary; automatic audio transcription is not implemented.
 
-| Field | Detail |
-|---|---|
-| Database | Weekly Reflection Reports |
-| Database ID | `0e48d819-6441-4313-ac04-629060baac1b` |
-| Location | Operations › AI Management |
-| New row per week | Yes — titled "Week of [Mon DD, YYYY]" |
+## Architecture
+Slack hosts event reception, durable workflow state and scheduling. OpenAI Managed Agents hosts conversation execution. Notion holds the combined report.
+Use Baxter bot authorization only. Personal Slack OAuth and personal Slack MCP are excluded. Each participant/week has a separate session and authorized thread.
+The Slack relay checks workspace, participant, channel, thread and cutoff before handing off input. Agent instructions restrict outbound replies to the same thread; live behavioral verification remains required.
+After a long pause, a new hosted sandbox can restore context from that participant's recorded thread. No conversation polling timer is used.
 
-## Schedule
+## Report
+Separate confirmed, unconfirmed, partial, voice-review, no-response and collection-failed statuses. A failed read is never interpreted as silence.
+Shared patterns require at least two people's evidence; otherwise label an individual signal. Include momentum, blockers, coordination, AI and offering hypotheses, named summaries, next-week intentions and participation.
+For each opportunity include evidence, confidence, potential impact, a next experiment, suggested owner and success measure. Keep observations, inferred causes and hypotheses distinct. Do not invent savings or create tasks automatically.
+Prior comparison uses up to four completed cycles saved by this hosted workflow; mark comparison unavailable if none exist.
 
-- **Send:** Fridays at 3pm EDT (`0 19 * * 5`)
-- **Report:** Mondays at 9am EDT (`0 13 * * 1`)
+## State and retries
+Persist the Friday roster, per-person DM/root/session mappings, captured reflection messages and report status in the Slack datastore.
+Reconcile prompt metadata before sending again; stop on ambiguous delivery rather than blindly retrying.
+Use stable OpenAI event idempotency keys. Recover replies posted while provisioning a conversation.
+Query Notion by week before creating a row; stop on duplicates. Update a dedicated managed report section, preserving unrelated content. Mark completed only after reading back the report and properties.
 
-## Routine Configuration
+## Configuration and activation
+Required hosted secrets: OPENAI_API_KEY, OPENAI_SESSION_ID (configuration source), and NOTION_API_TOKEN.
+Keep secrets in the host's secret store; never place them in GitHub, prompts, logs or command arguments.
+Share only the Reports table with the dedicated Notion integration. A chat connector does not automatically authorize the hosted bot.
+Additional bot scopes: datastore:read, datastore:write, triggers:write. Outbound domains: api.openai.com and api.notion.com. Conversation sandbox network: slack.com only.
+Keep TEAM_ENABLED false until identity/roster, credentials, listener creation, isolated replies, long-pause resumption and a controlled report write/readback pass.
+Disable the broad pilot listener before enabling team routing. Create exactly one Friday, Monday collection and Monday report schedule and retain their returned IDs.
+To stop the rollout, set TEAM_ENABLED false; keep older sender/polling/report routines paused.
 
-### Send Routine
+## Validation
+Thirteen automated tests passed for identity/conversation boundaries, errors, local time and DST, roster exclusions, event idempotency, prompt recovery, pagination, cutoff/late edits, duplicate report rows, retry behavior and verified completion.
+Slack manifest validation required unique workflow and function callback IDs and nonempty administrative trigger values; these were corrected during deployment.
 
-| Field | Value |
-|---|---|
-| Routine ID | `trig_0124LBy8pXoRyWj4EYyrF23p` |
-| Schedule | `0 19 * * 5` (Friday 3pm EDT) |
-| MCP Connections | None |
-| Slack Sender | Baxter (`$BAXTER_TOKEN`) |
+## Repository scope
+This repository is public. It contains sanitized operating notes only: no tokens, internal workspace/channel/session IDs, participant transcripts or private Notion links. Account-specific configuration and implementation are retained in the authorized operational workspace.
 
-### Report Routine
-
-| Field | Value |
-|---|---|
-| Routine ID | `trig_019yr7J99UuS2ycHsThq5r2b` |
-| Schedule | `0 13 * * 1` (Monday 9am EDT) |
-| MCP Connections | Gmail, Notion |
-| Slack Reader | Baxter (`$BAXTER_TOKEN`) |
-| Email recipient | rachel@nowtonext.ai |
-
-## Recreating This System
-
-**Send routine:**
-1. Create a new routine at [claude.ai/code/routines](https://claude.ai/code/routines)
-2. Set schedule to `0 19 * * 5`
-3. No MCP connectors needed
-4. Ensure `BAXTER_TOKEN` is set in the environment
-5. Paste the prompt from `weekly-reflection-send-baxter.md`
-
-**Report routine:**
-1. Create a new routine
-2. Set schedule to `0 13 * * 1`
-3. Attach **Gmail** and **Notion** MCP connectors
-4. Ensure `BAXTER_TOKEN` is set in the environment
-5. Paste the prompt from `weekly-reflection-report-baxter.md`
-
-## Related Files
-
-- `weekly-reflection-send-baxter.md` — Friday send routine prompt
-- `weekly-reflection-report-baxter.md` — Monday report routine prompt
