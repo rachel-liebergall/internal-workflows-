@@ -19,6 +19,7 @@ datastore names and callback IDs when updating an existing app.
 | openaiProjectId                         | OpenAI project for agent requests                                              |
 | reportsDataSourceId / reportsDatabaseId | Weekly reflection Notion destination                                           |
 | vendorsDataSourceId / vendorsDatabaseId | Vendor Perspectives Notion destination                                         |
+| ntnDataSourceId / ntnDatabaseId         | NTN Quotable Insights Notion destination                                       |
 | excludedVaultId1 / excludedVaultId2     | Vaults excluded when deriving reflection configuration from its source session |
 
 The example identifiers are synthetic. The tests import the same configuration
@@ -29,10 +30,11 @@ Configure hosted variables securely in the existing Slack app:
 - `OPENAI_API_KEY`
 - `OPENAI_SESSION_ID`: existing authorized source session for reflection model,
   instructions and bot-only vault configuration.
-- `NOTION_API_TOKEN`: dedicated Notion integration shared with the two
-  destination databases.
+- `NOTION_API_TOKEN`: dedicated Notion integration shared with the destination
+  databases.
 - `TEAM_ENABLED`: explicit `true` enables weekly team workflow operations.
 - `VENDOR_CAPTURE_ENABLED`: explicit `true` enables vendor capture.
+- `NTN_CAPTURE_ENABLED`: explicit `true` enables NTN insight capture.
 - `PILOT_ENABLED`: keep `false` for normal team operation.
 
 `.env.example` lists variable names only. In the verified operational
@@ -47,13 +49,13 @@ stores or real message replay files.
 ```sh
 cp deployment.example.json deployment.local.json
 # Keep the synthetic example configuration for these mocked tests.
-deno test functions/relay_test.ts functions/team_test.ts lib/notion_test.ts lib/vendor_test.ts
+deno test functions/relay_test.ts functions/team_test.ts lib/notion_test.ts lib/vendor_test.ts lib/ntn_test.ts
 deno check manifest.ts functions/*.ts workflows/*.ts triggers/*.ts lib/*.ts datastores/*.ts
 deno lint
 deno fmt --check
 ```
 
-26 tests cover reflection routing, DST/cutoff, roster exclusions, retries,
+30 tests cover reflection routing, DST/cutoff, roster exclusions, retries,
 pagination, report completion, vendor matching, evidence validation, isolated
 analysis, destination schema checks, write readback and uncertain-write
 reconciliation. Tests are not live deployment validation.
@@ -123,7 +125,7 @@ insufficient.
 - `lib/vendor_rules.ts`, `lib/vendor_notion.ts`: vendor matching,
   exact-substring evidence checks, schema validation, source keys and verified
   writes.
-- `datastores/`: independent reflection and vendor state.
+- `datastores/`: independent reflection, vendor and NTN state.
 - `workflows/`, `triggers/`: workflow inputs, event routing, recurring schedules
   and explicit operational checks.
 
@@ -156,3 +158,38 @@ new analysis; uncertain writes query the stable key before creating again.
 Failed or stalled jobs may need explicit recovery. Do not claim exactly-once
 delivery, silently drop unfinished candidates or overwrite human-edited Notion
 rows.
+
+## NTN quotable insight capture
+
+Share the NTN destination with the same dedicated Notion integration. A chat
+connector grant does not grant the hosted app access.
+
+Before activation, run `triggers/ntn_verify.ts` (read-only schema check) and
+`triggers/ntn_verify_write.ts` (temporary synthetic create/read/archive).
+Validate an authorized genuine source without posting Slack test messages. Only
+then enable the hosted NTN flag and create exactly one event trigger from
+`triggers/ntn_capture.ts`. `ntn_coverage.ts` reports channel membership. Leave
+vendor and reflection flags and triggers unchanged.
+
+Required fields are checked by `lib/ntn_notion.ts`: Insight, NTN Wording, NTN
+Author, Insight Type, Wording Type, Research / Thought / Evidence, Client
+Application, Citations, Original Source, Evidence Type, Reuse Status,
+Limitations, Research Next Step, Source Date, Captured On and Insight Key. Use
+the existing select options in the destination.
+
+The model extracts original NTN thinking into a sanitized synthesis. It must
+declare ownership and safe reuse; validators require an exact supporting source
+substring and the supplied author. Evidence excerpts remain internal to
+validation and are never copied into the shared Notion body. This guards
+provenance and formatting, not truth or empirical validation. New live rows are
+Practitioner observation / Needs verification. The live extractor cannot create
+an NTN original research classification or claim a completed study.
+
+Stable keys use `ntn:slack:channel:message-ts:baxter-N`. Reconciliation must
+compare original source IDs and claim meaning against all prior rows, not just
+literal keys. Notion does not provide an atomic uniqueness constraint.
+
+Pause only NTN by disabling its hosted flag or removing only its event trigger.
+Pause its separate Monday/Wednesday/Friday reconciliation independently if
+stopping the whole workflow. Registry status alone does not disable an event
+listener. Retain failed jobs and inspect state before retrying.

@@ -1,11 +1,13 @@
 # Baxter: Slack-hosted workflows
 
-Baxter is one custom Slack app supporting two separate workflows:
+Baxter is one custom Slack app supporting three separate workflows:
 
 - **Weekly reflections:** Friday prompts, individual AI conversations, Monday
   collection and a Notion report.
 - **Vendor perspectives:** new-message events, candidate matching, isolated AI
   extraction, duplicate checks and source-linked Notion captures.
+- **NTN quotable insights:** original team ideas, frameworks and field
+  observations, saved as sanitized source-linked synthesis pending review.
 
 The implementation is in [slack-hosted](slack-hosted/). The existing
 [reflection operating guide](../Weekly%20Reflection%20%28Baxter%29/README.md)
@@ -32,14 +34,14 @@ environment. Reflection conversation sessions separately use the configured
 bot-only vault and a Slack-only hosted sandbox to respond inside their
 authorized participant conversation.
 
-Granola ingestion and the daily 9 a.m. Eastern Slack reconciliation are separate
-Codex automation work, outside this Slack app. The daily reconciliation recovers
+Granola ingestion and scheduled Slack reconciliation are separate
+Codex automation work, outside this Slack app. Daily vendor reconciliation and Monday/Wednesday/Friday 9 a.m. Eastern NTN reconciliation recover
 richer thread context and sources the live matcher may miss.
 
 ## Source and configuration
 
 This is a sanitized source snapshot of the app deployed October 14, 2026,
-including both workflows, the legacy restricted pilot and operational
+including all three workflows, the legacy restricted pilot and operational
 verification helpers. Workspace, bot, user, channel, OpenAI project, vault and
 Notion identifiers have been moved into an ignored deployment configuration.
 Credentials, local Slack account files, transcripts and the one-off replay
@@ -52,7 +54,7 @@ redeployed as part of adding this source to GitHub.
 
 ## Verified snapshot
 
-All 26 automated tests pass with example configuration. Full TypeScript
+All 30 automated tests pass with example configuration. Full TypeScript
 checking, formatting and lint pass. Tests mock external APIs; they do not send
 messages or modify Notion. Production setup separately verified schema access,
 temporary create/read/archive permissions and completion of a real-message
@@ -68,3 +70,22 @@ triggers are unsupported; use the daily fallback. New private channels require a
 member to invite Baxter. Candidate matching and semantic deduplication are
 best-effort; Notion provides no atomic uniqueness constraint across concurrent
 writers.
+
+
+## NTN capture
+
+The separate NTN function uses its own datastore, feature flag and event trigger.
+It accepts original team thinking, not third-party research presented as the
+team's findings. Analysis receives the source message and existing summaries
+in an isolated session. Validators check source evidence, attributed authorship
+and the safe-reuse declaration; these do not prove a claim is true.
+
+Live entries use sanitized synthesis with Needs verification status. They
+include attribution, an original Slack link, a client application, limitations
+and a proposed research next step. Private evidence excerpts are not written
+to the shared table. A single message is not systematic empirical research.
+
+The listener excludes bots, guests, DMs and externally shared channels. Ordinary
+public/private channels require app membership. Slack Connect, richer context,
+edits and missed candidates need the separate reconciliation scan. The app
+does not send Slack messages for vendor or NTN capture.

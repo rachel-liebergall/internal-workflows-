@@ -10,6 +10,9 @@ import { TeamReplyWorkflow } from "./workflows/team_reply.ts";
 import { VendorCapture } from "./functions/vendor_capture.ts";
 import { VendorCaptureWorkflow } from "./workflows/vendor_capture.ts";
 import { VendorState } from "./datastores/vendor_state.ts";
+import { NtnCapture } from "./functions/ntn_capture.ts";
+import { NtnCaptureWorkflow } from "./workflows/ntn_capture.ts";
+import { NtnState } from "./datastores/ntn_state.ts";
 const botScopes = [
   ...new Set([
     ...original.oauth_config.scopes.bot,
@@ -30,14 +33,15 @@ const hosted = Manifest({
   icon: "",
   description: original.display_information.description,
   backgroundColor: original.display_information.background_color,
-  functions: [Relay, Maintenance, TeamReply, VendorCapture],
+  functions: [Relay, Maintenance, TeamReply, VendorCapture, NtnCapture],
   workflows: [
     Reflection,
     MaintenanceWorkflow,
     TeamReplyWorkflow,
     VendorCaptureWorkflow,
+    NtnCaptureWorkflow,
   ],
-  datastores: [State, VendorState],
+  datastores: [State, VendorState, NtnState],
   outgoingDomains: ["api.openai.com", "api.notion.com"],
   botScopes,
 });

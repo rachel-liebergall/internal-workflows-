@@ -11,5 +11,7 @@
   "vendorsDataSourceId": "00000000-0000-4000-8000-000000000003",
   "vendorsDatabaseId": "00000000-0000-4000-8000-000000000004",
   "excludedVaultId1": "vault_EXCLUDED1",
-  "excludedVaultId2": "vault_EXCLUDED2"
+  "excludedVaultId2": "vault_EXCLUDED2",
+  "ntnDataSourceId": "00000000-0000-4000-8000-000000000005",
+  "ntnDatabaseId": "00000000-0000-4000-8000-000000000006"
 }
