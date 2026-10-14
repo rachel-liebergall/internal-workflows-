@@ -1,5 +1,5 @@
 # Baxter weekly reflection — Slack and OpenAI
-Updated: 2026-10-11
+Updated: 2026-10-14
 
 ## Current status
 The Slack-hosted application update has been deployed. A restricted live DM pilot previously verified incoming Slack message → OpenAI Managed Agent → Baxter bot reply.
@@ -63,5 +63,5 @@ The report-analysis session supplies its evidence as initial input at creation, 
 The old broad DM pilot listener was removed and its feature flag disabled before team mode was enabled.
 
 ## Repository scope
-This repository is public. It contains sanitized operating notes only: no tokens, internal workspace/channel/session IDs, participant transcripts or private Notion links. Account-specific configuration and implementation are retained in the authorized operational workspace.
+This repository is public. It now includes the [sanitized Slack-hosted implementation](../Baxter/slack-hosted/) for both weekly reflections and vendor capture, plus [architecture and setup documentation](../Baxter/README.md). Private identifiers belong in the ignored deployment.local.json file; credentials remain in the host's secret store. Tokens, account linkage, participant transcripts, real-message replays and private Notion links are excluded. Adding code to GitHub does not automatically deploy it to Slack.
 

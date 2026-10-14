@@ -1,0 +1,8 @@
+deployment.local.json
+.env
+.env.*
+!.env.example
+.slack/*
+!.slack/hooks.json
+node_modules/
+.DS_Store

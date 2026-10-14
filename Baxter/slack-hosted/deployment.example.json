@@ -1,0 +1,15 @@
+{
+  "teamId": "T0000000001",
+  "pilotUserId": "U0000000001",
+  "openaiProjectId": "proj_EXAMPLE",
+  "reportsDataSourceId": "00000000-0000-4000-8000-000000000001",
+  "excludedUserId": "U0000000002",
+  "botUserId": "U0000000003",
+  "botId": "B0000000001",
+  "reportsDatabaseId": "00000000-0000-4000-8000-000000000002",
+  "pilotChannelId": "D0000000001",
+  "vendorsDataSourceId": "00000000-0000-4000-8000-000000000003",
+  "vendorsDatabaseId": "00000000-0000-4000-8000-000000000004",
+  "excludedVaultId1": "vault_EXCLUDED1",
+  "excludedVaultId2": "vault_EXCLUDED2"
+}
