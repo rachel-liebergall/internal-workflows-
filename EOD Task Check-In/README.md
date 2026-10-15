@@ -1,5 +1,7 @@
 # EOD Task Check-In
 
+> **Retired.** Neither the check-in nor the updater routine exists in Claude routines anymore (checked October 15, 2026). Their replacement is the [Daily Tasks Pilot (Baxter)](../Daily%20Tasks%20Pilot%20%28Baxter%29/README.md). This page is kept for reference only.
+
 A two-part daily routine that sends each NTN team member a personalized end-of-day task list, reads their replies, and updates Notion automatically.
 
 ## What It Does

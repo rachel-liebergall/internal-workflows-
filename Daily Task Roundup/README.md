@@ -1,5 +1,7 @@
 # Daily Task Roundup
 
+> **Retired.** This routine no longer exists in Claude routines (checked October 15, 2026). Its replacement is the [Daily Tasks Pilot (Baxter)](../Daily%20Tasks%20Pilot%20%28Baxter%29/README.md). This page is kept for reference only.
+
 A scheduled Claude Code routine that sends each NTN team member one personalized morning Slack message per day combining their upcoming tasks and any external meetings.
 
 ## Schedule
