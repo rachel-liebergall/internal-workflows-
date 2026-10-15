@@ -1,78 +1,45 @@
 # Substack IP Scanner
 
-A weekly Friday routine that scans Jason Averbook's and Jess Von Bank's Substack publications, extracts action items and offering opportunities from new posts, and adds them to the Notion Knowledge Library.
+Scan Jess Von Bank's and Jason Averbook's Substacks each **Monday at 9 a.m. Eastern** and add useful takeaways, next steps, and potential offering opportunities to **Substack Action Items & Takeaways** in **Operations → Knowledge Library**.
 
-## What It Does
+## Current status
 
-Runs every Friday at 9am EDT. On each run it:
+As of October 14, 2026, a Codex automation is active in the scanner chat. Its first automatic run is scheduled for **October 19, 2026, at 9 a.m. Eastern**. “Pending” means that the first scheduled run has not occurred. It does not mean the automation is disabled.
 
-1. Fetches RSS feeds from all three Substack publications (Jason × 2, Jess × 1)
-2. Attempts best-effort LinkedIn scraping (skips silently if blocked)
-3. Filters to posts published in the last 7 days
-4. Checks the Notion database to skip posts already processed
-5. Fetches and analyzes each new post for high-signal NTN-relevant items
-6. Creates entries in the **Substack Action Items & Takeaways** database with all properties filled
-7. Sends Rachel a Slack DM summarizing what was added
+Both RSS feeds were fetched and parsed successfully, and the Notion destination schema and existing entries were inspected. No end-to-end scheduled Notion write has been verified yet. Updating these repository files does not deploy or alter a separate Claude routine.
 
-## What Gets Extracted
+The earlier README described a Friday Claude routine with Slack notifications. Its current deployment status has not been verified. Check that runtime and pause its scanner schedule if it is still active before relying on the Monday automation as the sole writer. See [RUNBOOK.md](RUNBOOK.md).
 
-Each entry is classified by type and opportunity size:
+## Weekly behavior
 
-| Type | Description |
-| --- | --- |
-| New IP/Offering | Named frameworks, methodologies, original concepts |
-| Positioning/GTM | Market narratives, positioning angles, GTM ideas |
-| Ops Signal | Operational signals or process improvements |
-| Content Asset | Reusable assets (templates, checklists, prompts) |
-| Tracking Note | Context worth preserving but not immediately actionable |
+1. Fetch both feeds and read new article text.
+2. Cover the previous 14 days on the first run; subsequently use per-author successful checkpoints with a 14-day overlap.
+3. Compare canonical links, authors, and item substance against existing Notion rows.
+4. Add one primary takeaway and up to two distinct useful actions per new article.
+5. Map to the existing database fields and verify saved rows.
+6. Report additions or failures in the scanner chat; stay quiet when nothing changed.
 
-Only high-signal, NTN-actionable items are added — the routine is designed to avoid noise.
+Existing statuses and human edits are preserved. Unavailable article text produces an explicitly limited Tracking Note rather than a guessed analysis. Podcast entries are analyzed from accessible text unless audio or a transcript is actually read.
 
 ## Sources
 
-| Author | Publication | RSS Feed |
+| Author | RSS | Archive |
 | --- | --- | --- |
-| Jason Averbook | jasonaverbook.substack.com | https://jasonaverbook.substack.com/feed |
-| Jason Averbook | nowofwork.substack.com (secondary) | https://nowofwork.substack.com/feed |
-| Jess Von Bank | jessvonbank.substack.com | https://jessvonbank.substack.com/feed |
-| Both | LinkedIn (best-effort) | — |
+| Jess | https://jessvonbank.substack.com/feed | https://jessvonbank.substack.com/archive |
+| Jason | https://jasonaverbook.substack.com/feed | https://jasonaverbook.substack.com/archive |
 
-## Notion Database
+The legacy Now of Work feed and LinkedIn scraping are outside this weekly workflow.
 
-**Substack Action Items & Takeaways** — `15f21bdac867475cb7968ca621cd34b3`
-Inside: **Knowledge Library** → Operations
+## Files
 
-| Property | Type | Values |
-| --- | --- | --- |
-| Item | Title | Short name for the item |
-| Author | Select | Jason, Jess |
-| Summary | Text | Why it matters to NTN |
-| Post | Text | Source post title |
-| Post Date | Date | Publication date |
-| Source Link | URL | Direct post URL |
-| Status | Status | Not started, In progress, Done |
-| Type | Select | New IP/Offering, Positioning/GTM, Ops Signal, Content Asset, Tracking Note |
-| Next Step | Text | Suggested next action |
-| Offering Opportunity | Text | Specific product/service opportunity |
-| Opportunity Size | Select | High, Medium, Low, None - Reinforces Existing |
-
-## Schedule
-
-- **Automatic:** Fridays at 9am EDT
-
-## Routine Configuration
-
-| Field | Value |
+| File | Purpose |
 | --- | --- |
-| Routine ID | `trig_01CddU5wkz68ZdDcxQTFqBZn` |
-| Model | claude-sonnet-4-6 |
-| Schedule | `0 13 * * 5` (9am EDT Fridays) |
-| MCP Connections | Notion, Slack |
-| Knowledge Library | `3b556cd2-373b-81dd-b657-d4355461b74f` |
+| [substack-ip-scanner.md](substack-ip-scanner.md) | Reusable scanner instructions |
+| [FIELD_MAPPING.md](FIELD_MAPPING.md) | Notion properties, classifications, and payload shape |
+| [RUNBOOK.md](RUNBOOK.md) | Setup, validation, recovery, schedule handoff, and maintenance |
 
-## Recreating This Routine
+## Configuration and repository scope
 
-1. Go to [claude.ai/code/routines](https://claude.ai/code/routines) and create a new routine
-2. Set the schedule to `0 13 * * 5`
-3. Attach **Notion** and **Slack** MCP connectors
-4. Paste the prompt from `substack-ip-scanner.md` as the agent instructions
+Use a timezone-aware Monday 09:00 schedule in `America/New_York`, a Notion connection with access to the destination, and a network tool that can retrieve XML. The runtime privately supplies the destination database and data source IDs. Notion stores the takeaways; private runtime state stores checkpoints and retries.
+
+This is an agent-instruction workflow, not a standalone application or a GitHub Actions deployment. The repository is public: keep credentials, private Notion links, operational identifiers, article bodies, and run logs in the authorized runtime. GitHub changes are reviewed independently from scheduler activation.
