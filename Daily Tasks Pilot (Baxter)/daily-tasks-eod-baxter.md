@@ -29,7 +29,7 @@ Headers: `Authorization: Bearer $BAXTER_TOKEN`, `Content-Type: application/json;
 ## HOW TO APPLY THREAD REPLIES TO NOTION
 Only the person's own replies (their Slack ID) in a Baxter thread can change Notion. Ignore messages from Claude or any other bot/app, and ignore the person's messages that @mention Claude or another app (those are requests to that app, not task updates). Read the person's qualifying replies posted AFTER Baxter's last message in that thread (earlier ones were already handled). If there are none, do nothing.
 
-Baxter's parent message numbers each task and links it to its Notion page (`<https://app.notion.com/...|Task name>`). For each reply, work out which task it means (by number, name, project, or an obvious reference) and what it says, in plain language:
+Baxter's messages number each task and link it to its Notion page (`<https://app.notion.com/...|Task name>`); numbers continue across the morning list and any "🆕" additions. For each reply, work out which task it means (by number, name, project, or an obvious reference) and what it says, in plain language:
 - **Date/time change** ("push 3 to Fri", "move the Cambia one to next Tuesday", "BCBSMA → Monday 2pm") → update `Due Date`. Date only → set the date. Time given → set a datetime in the person's time zone. Resolve relative days against the reply's local date. "Next week" with no day means Monday of next week.
 - **Clearly finished** ("done", "sent it", "shipped", "wrapped") → Status = Done
 - **Started** → Status = In progress. **Dropped / not needed** → Status = Cancelled
@@ -51,9 +51,11 @@ If nobody is DUE, stop immediately without sending anything.
 
 Run Steps 1–5 for each DUE person.
 
-## STEP 1 — FIND THIS MORNING'S LIST AND APPLY LATE REPLIES
-In the person's channel, find Baxter's message today starting with "📋 *Daily tasks". Extract the numbered tasks and their Notion URLs. Store its `ts` as MORNING_TS.
+## STEP 1 — FIND TODAY'S LIST AND APPLY LATE REPLIES
+In the person's channel, find Baxter's message today starting with "📋 *Daily tasks". Store its `ts` as MORNING_TS. Extract the numbered tasks and their Notion URLs from it AND from Baxter's "🆕" thread replies (tasks added during the day). Keep their numbers.
 Apply any unhandled replies in that thread using HOW TO APPLY THREAD REPLIES TO NOTION (so the EOD reflects them).
+Final new-task check: query open tasks assigned to the person that are due today (start = TODAY or a range including TODAY). Add any whose page ID isn't already in the list, continuing the numbering, so nothing assigned after the last hourly check is missed.
+Mark a task **added late** if it first appeared in a "🆕" reply posted at or after 15:30 local, or was found by this final check.
 If there is no morning message today, build the task list fresh (open tasks assigned to them due today, plus the 3 most recently overdue non-Ongoing tasks) and continue.
 
 ## STEP 2 — NOTION: WHAT ACTUALLY CHANGED
@@ -81,7 +83,7 @@ Number tasks across the message. Link every task name.
 2. <URL|Task> · [what changed in Notion][ · Slack note]
 
 *⏳ No movement today*
-3. <URL|Task> · due [Mon D][ · Slack note, if any]
+3. <URL|Task> · due [Mon D][ · Slack note, if any][ · _(added late)_ if marked added late]
 
 _Anything to carry over or flag for tomorrow? Just reply here._
 
