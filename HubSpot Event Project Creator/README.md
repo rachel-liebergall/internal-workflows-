@@ -1,12 +1,12 @@
 # HubSpot Event Project Creator
 
-A scheduled Claude agent that makes sure every HubSpot deal with an upcoming event has a Notion project and a Google Drive folder, and that the HubSpot deal links to both.
+A scheduled Claude agent that makes sure every HubSpot deal with an upcoming event or client meeting has a Notion project and a Google Drive folder, and that the HubSpot deal links to both.
 
 ## What It Does
 
 Runs every weekday at 9am EDT. On each run it:
 
-1. Fetches HubSpot deals where `event_date` falls within the next 28 days
+1. Fetches HubSpot deals where `event_date` falls within the next 28 days, **or** that have a HubSpot meeting linked to the deal in the next 28 days (Closed Lost excluded)
 2. Finds the deal's existing Notion project using tiered matching (see below)
 3. Creates a new Notion project only when there is no certain or possible match, with Tags derived from the deal's `service_type`
 4. Makes sure the project has a Google Drive folder in "Now to Next Company Files" (links an existing folder or creates one under the tag-matched parent; root + "needs organizing" if no tag matches)
@@ -32,10 +32,10 @@ To confirm a Tier 2 match, add the HubSpot deal link to the project's notes (or 
 | Property | Type | Description |
 | --- | --- | --- |
 | Project Name | Title | Deal name from HubSpot |
-| Timeline | Date range | Start = today, end = event_date |
+| Timeline | Date range | Start = today, end = event_date (start only if no event date) |
 | Status | Status | "Not started" |
 | Tags | Multi-select | Derived from service_type (see mapping below) |
-| Notes (migrated) | Text | HubSpot deal URL, event date, deal stage, service type, company |
+| Notes (migrated) | Text | HubSpot deal URL, event date, next meeting, deal stage, service type, company |
 | Google Drive Folder | URL | Project's Drive folder |
 
 ### service_type → Tags mapping
