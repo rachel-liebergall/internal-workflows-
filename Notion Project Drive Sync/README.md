@@ -1,24 +1,35 @@
 # Notion Project Drive Sync
 
-Three routines that keep the NTN Projects database in sync with Google Drive — automatically linking projects to folders, creating missing folders, and auditing mismatches weekly.
+Routines that keep the NTN Projects database in sync with Google Drive and HubSpot: linking projects to folders, creating missing folders, copying folder links to HubSpot deals, and auditing weekly.
 
 ## What It Does
 
-**Folder Watcher (Mon & Thu, 9am EDT):** Scans all active Notion projects for missing Google Drive folder links. For each project without a link, it searches Drive for an existing folder match. If none is found, it creates a new folder in the tag-appropriate location and updates the Notion project with the link. Falls back to the root company folder and alerts Rachel via Slack if no tag match is found.
+**Folder Watcher (weekdays, 9:10am EDT):** Scans Notion projects (every status except Lost) for missing Google Drive folder links. For each one, it links an existing matching folder or creates a new folder under the tag-appropriate parent, then updates the project. If no tag matches, it creates the folder in the root and DMs Rachel. It then copies each project's folder link to its HubSpot deal's `drive_folder` field.
 
-**Folder Audit (Fridays, 9am EDT):** Compares all Notion projects against Drive and flags four types of mismatches: missing Drive links, broken links (folder deleted or moved), folders in the wrong location based on project tag, and Drive folders with no matching Notion project. Sends a Slack DM to Rachel only if issues are found.
+**Folder Audit (Fridays, 9am EDT):** Report-only. Compares projects against Drive and flags:
+- **Empty folders after the event:** the event date (Timeline end, or the HubSpot deal's `event_date`) has passed and the folder has no files
+- **Missing Drive links**
+- **Broken links:** folder deleted, trashed or moved
+- **Wrong location:** the folder's parent doesn't match the project tag
+- **Orphaned folders:** Drive folders with no matching Notion project
 
-**One-Time Backfill (Manual):** The original job that added the `Google Drive Folder` URL property to the Projects database and populated it for all existing projects. Parked — not scheduled to run again.
+DMs Rachel only if something is flagged.
+
+**One-Time Backfill (Manual):** The original job that added the `Google Drive Folder` URL property and populated it. Parked. Its prompt still references the old database ID and statuses.
+
+See also [HubSpot Event Project Creator](../HubSpot%20Event%20Project%20Creator/README.md), which creates projects and folders for deals with an upcoming event or linked client meeting.
 
 ## Notion Database
 
-**NTN Project Manager** — `9f556cd2373b8209ab98815e295f177e`
+**Projects** — `15456cd2373b82e2bca10190134ace79` (data source `collection://7fe56cd2-373b-8368-a21c-87f2c9b61ec3`)
 
 | Property | Type | Description |
 | --- | --- | --- |
 | Project Name | Title | Used for Drive folder name matching |
-| Status | Status | Active, In Progress, Not Started, Ongoing, Done (all included) |
+| Status | Status | Not started, Backlog, In progress, Behind, On Hold, Done included; Lost skipped |
 | Tags | Multi-select | Determines which Drive subfolder to use |
+| Timeline | Date range | End date = event date (used by the audit's empty-folder check) |
+| Notes (migrated) | Text | Holds the HubSpot deal URL that links a project to its deal |
 | Google Drive Folder | URL | Populated and maintained by these routines |
 
 ### Drive Folder Structure
@@ -32,31 +43,19 @@ Tag values map to subfolders inside **Now to Next Company Files**:
 | Client Delivery / The Build | Client Delivery |
 | No match | Root (`Now to Next Company Files`) + Slack alert to Rachel |
 
-## Schedule
-
-| Routine | Schedule |
-| --- | --- |
-| Folder Watcher | Mondays and Thursdays at 9am EDT |
-| Folder Audit | Fridays at 9am EDT |
-| Backfill | Manual / one-time |
-
 ## Routine Configuration
 
 | Field | Folder Watcher | Folder Audit | Backfill |
 | --- | --- | --- | --- |
 | Routine ID | `trig_01QwuNoQeaJFP7E4HFEfavaY` | `trig_012oWPh6wjH99VBrW5ioxZDQ` | `trig_01W6t7b5SLKcaWzuwkmPnD2H` |
-| Model | claude-sonnet-4-6 | claude-sonnet-4-6 | claude-sonnet-4-6 |
-| Schedule | `0 13 * * 1,4` | `0 13 * * 5` | `0 0 1 1 0` (parked) |
-| MCP Connections | Notion, Google Drive | Notion, Google Drive | Notion, Google Drive |
+| Schedule | `10 13 * * 1-5` | `0 13 * * 5` | parked |
+| MCP Connections | Notion, Google Drive, HubSpot | Notion, Google Drive, HubSpot | Notion, Google Drive |
 | Slack Sender | Baxter (`$BAXTER_TOKEN`) | Baxter (`$BAXTER_TOKEN`) | None |
-| Projects DB | `9f556cd2373b8209ab98815e295f177e` | `9f556cd2373b8209ab98815e295f177e` | `9f556cd2373b8209ab98815e295f177e` |
 
 ## Recreating This Routine
 
-To recreate the Folder Watcher or Folder Audit:
-
 1. Go to [claude.ai/code/routines](https://claude.ai/code/routines) and create a new routine
-2. Set the appropriate schedule (see table above)
-3. Attach **Notion** and **Google Drive** MCP connectors
+2. Set the schedule (see table above)
+3. Attach the **Notion**, **Google Drive** and **HubSpot** MCP connectors
 4. Add `BAXTER_TOKEN` as an environment variable
-5. Paste the prompt from the corresponding `.md` file as the agent instructions
+5. Paste the prompt from the corresponding `.md` file
