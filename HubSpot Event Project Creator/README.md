@@ -1,20 +1,33 @@
 # HubSpot Event Project Creator
 
-A scheduled Claude agent that finds HubSpot deals with upcoming events and auto-creates the corresponding project in Notion — then writes the Notion URL back to the HubSpot deal.
+A scheduled Claude agent that makes sure every HubSpot deal with an upcoming event has a Notion project and a Google Drive folder, and that the HubSpot deal links to both.
 
 ## What It Does
 
 Runs every weekday at 9am EDT. On each run it:
 
-1. Fetches all open HubSpot deals where `event_date` falls within the next 28 days
-2. Checks whether each deal already has a corresponding Notion project (via HubSpot `notion_project_url` field or Notion search)
-3. Creates a new Notion project for any deal missing one, with Tags derived from the deal's `service_type`
-4. Writes the new Notion project URL back to the HubSpot deal (`notion_project_url` property)
-5. Sends a Slack DM to Rachel summarizing what was created and what was skipped
+1. Fetches HubSpot deals where `event_date` falls within the next 28 days
+2. Finds the deal's existing Notion project using tiered matching (see below)
+3. Creates a new Notion project only when there is no certain or possible match, with Tags derived from the deal's `service_type`
+4. Makes sure the project has a Google Drive folder in "Now to Next Company Files" (links an existing folder or creates one under the tag-matched parent; root + "needs organizing" if no tag matches)
+5. Writes `notion_project_url` and `drive_folder` back to the HubSpot deal
+6. DMs Rachel (as Baxter) only when something changed or needs her review
+
+## Project matching
+
+All projects are loaded once per run with a SQL query on the Projects data source (no `notion-search`, which is a fuzzy workspace-wide search). Names are normalized first: lowercase, no punctuation, drop inc/llc/co/corp/ltd/the/and, drop anything after a dash (so "Cox Enterprises — General" → "cox enterprises").
+
+| Tier | Rule | Action |
+| --- | --- | --- |
+| 1 — certain | Deal already has `notion_project_url`; or a project's notes contain `/deal/{deal_id}`; or normalized names are equal | Link it (write `notion_project_url`). If 2+ certain matches → "Needs review", nothing linked |
+| 2 — possible | Open project (not Done/Lost) where one name contains the other, the project name contains the deal's company name, or half the key words of the shorter name overlap | Don't create, don't link. Listed in the DM under "Possible existing project — please confirm" |
+| 3 — none | No match | Create the project |
+
+To confirm a Tier 2 match, add the HubSpot deal link to the project's notes (or set `notion_project_url` on the deal). It becomes a Tier 1 match on the next run.
 
 ## Notion Database
 
-**NTN Project Manager** — `15456cd2373b82e2bca10190134ace79`
+**NTN Project Manager** — `15456cd2373b82e2bca10190134ace79` (data source `collection://7fe56cd2-373b-8368-a21c-87f2c9b61ec3`)
 
 | Property | Type | Description |
 | --- | --- | --- |
@@ -23,6 +36,7 @@ Runs every weekday at 9am EDT. On each run it:
 | Status | Status | "Not started" |
 | Tags | Multi-select | Derived from service_type (see mapping below) |
 | Notes (migrated) | Text | HubSpot deal URL, event date, deal stage, service type, company |
+| Google Drive Folder | URL | Project's Drive folder |
 
 ### service_type → Tags mapping
 
@@ -31,30 +45,24 @@ Runs every weekday at 9am EDT. On each run it:
 | Build / The Build | Client Delivery, The Build |
 | Signal / The Signal | The Signal |
 | Room / The Room | The Room |
+| Ignite | Client Delivery, Ignite |
 | General / (not set) | Client Delivery |
-
-## Schedule
-
-- **Automatic:** Weekdays at 9am EDT
 
 ## Routine Configuration
 
-Two variants exist — one uses Baxter's bot token for Slack, the other uses the Slack MCP connector:
+| Field | Value |
+| --- | --- |
+| Routine ID | `trig_01G8A4CGDy9v5RPEAJq2uUJw` |
+| Schedule | `0 13 * * 1-5` (9am EDT weekdays) |
+| MCP Connections | HubSpot, Notion, Google Drive |
+| Slack Sender | Baxter (`$BAXTER_TOKEN`, curl) |
+| Prompt | [hubspot-event-project-creator-baxter.md](hubspot-event-project-creator-baxter.md) |
 
-| Field | Baxter Variant | MCP Variant |
-| --- | --- | --- |
-| Routine ID | `trig_01G8A4CGDy9v5RPEAJq2uUJw` | `trig_01MkPFkk5T8YP6Kyse2tau4V` |
-| Model | claude-sonnet-4-6 | claude-sonnet-4-6 |
-| Schedule | `0 13 * * 1-5` | `0 13 * * 1-5` |
-| MCP Connections | HubSpot, Notion | HubSpot, Notion, Slack |
-| Slack Sender | Baxter (`$BAXTER_TOKEN`) | Slack MCP |
-| Notion Projects DB | `15456cd2373b82e2bca10190134ace79` | `15456cd2373b82e2bca10190134ace79` |
+`hubspot-event-project-creator.md` is the older Slack-MCP variant (`trig_01MkPFkk5T8YP6Kyse2tau4V`) and does not include the Drive or tiered-matching logic.
 
 ## Recreating This Routine
 
 1. Go to [claude.ai/code/routines](https://claude.ai/code/routines) and create a new routine
 2. Set the schedule to `0 13 * * 1-5`
-3. Attach the **HubSpot** and **Notion** MCP connectors
-   - Baxter variant: add `BAXTER_TOKEN` as an environment variable
-   - MCP variant: also attach the **Slack** MCP connector
-4. Paste the prompt from `hubspot-event-project-creator-baxter.md` or `hubspot-event-project-creator.md` as the agent instructions
+3. Attach the **HubSpot**, **Notion** and **Google Drive** MCP connectors, and add `BAXTER_TOKEN` as an environment variable
+4. Paste the prompt from `hubspot-event-project-creator-baxter.md`
