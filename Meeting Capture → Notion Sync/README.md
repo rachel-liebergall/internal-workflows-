@@ -1,13 +1,13 @@
 # Meeting Capture → Notion Sync
 
-A scheduled Claude agent that syncs completed Granola meeting notes to the **Team Granola Capture** Notion database every 2 hours throughout the workday.
+A scheduled Claude agent that syncs completed Granola meeting notes to the **Team Granola Capture** Notion database hourly throughout the workday (weekdays).
 
 ## What It Does
 
-Runs every 2 hours, 7am–7pm EDT. On each run it:
+Runs hourly at :16, 7am–7pm EDT, weekdays. On each run it:
 
-1. Pulls all completed meetings from Granola (Nowtonext workspace) for the past 24 hours
-2. Deduplicates against existing Notion rows by transcript link and title
+1. Pulls all completed meetings from Granola (Nowtonext workspace) for the past 3 days (so Friday-evening meetings are caught on Monday)
+2. Skips a meeting only if it's already in Notion, using exact checks on rows loaded by SQL (no fuzzy search): (1) same Granola ID — the UUID at the end of the Transcript Link, any URL format; (2) same title on the same day; or (3) a start time within 15 minutes plus a shared attendee (the same call recorded by two teammates). **When unsure, it adds the meeting** — Rachel would rather see an occasional duplicate than add meetings by hand. Meetings with no Granola summary after 2 days are added anyway.
 3. Fetches full meeting details: AI summary, action items, participants, transcript URL, folder/subfolder
 4. Classifies each meeting as Internal or External based on the Granola folder name (attendee domains as fallback)
 5. Maps the meeting to a Notion project via fuzzy folder/company name matching; defaults to "Opportunity Tracking" for unmatched external meetings
@@ -22,7 +22,7 @@ Runs every 2 hours, 7am–7pm EDT. On each run it:
 | Column | Type | Description |
 | --- | --- | --- |
 | Title | Title | Meeting name |
-| Date | Date | Meeting date |
+| Date | Date | Meeting start date and time (time is used for dedupe) |
 | Created by | Text | Always rachel@nowtonext.ai |
 | Attendees | Multi-select | All participant emails |
 | Summary | Text | Granola AI summary |
@@ -36,7 +36,7 @@ Runs every 2 hours, 7am–7pm EDT. On each run it:
 
 ## Schedule
 
-- **Automatic:** Every 2 hours, 7am–7pm EDT
+- **Automatic:** Hourly at :16, 7am–7pm EDT, weekdays
 
 ## Routine Configuration
 
@@ -44,7 +44,7 @@ Runs every 2 hours, 7am–7pm EDT. On each run it:
 | --- | --- |
 | Routine ID | `trig_013dtp9xwm17AkWeFjEwjhdx` |
 | Model | claude-sonnet-4-6 |
-| Schedule | `0 11,13,15,17,19,21,23 * * *` (every 2h, 11am–11pm UTC / 7am–7pm EDT) |
+| Schedule | `16 11-23 * * 1-5` (hourly, 7am–7pm EDT, weekdays) |
 | MCP Connections | Granola, Notion |
 | Granola Workspace | Nowtonext (`711732b8-9958-4c2c-9427-572bc064f857`) |
 | Granola Account | rachel@nowtonext.ai |
@@ -52,6 +52,10 @@ Runs every 2 hours, 7am–7pm EDT. On each run it:
 ## Recreating This Routine
 
 1. Go to [claude.ai/code/routines](https://claude.ai/code/routines) and create a new routine
-2. Set the schedule to `0 11,13,15,17,19,21,23 * * *`
+2. Set the schedule to `16 11-23 * * 1-5`
 3. Attach the **Granola** and **Notion** MCP connectors
 4. Paste the prompt from `agent-instructions.md` as the agent instructions
+
+## Why dedupe matters
+
+Every new row triggers the Notion agent "Meeting <> Tasks Follow-up Curator", which creates follow-up tasks. Before Oct 16, 2026 the dedupe looked for `/meetings/{id}` links while saved links use `/d/{id}`, and used fuzzy `notion-search` for titles, so the same meeting was re-added on later runs (about 42 duplicate rows Oct 1–16).
