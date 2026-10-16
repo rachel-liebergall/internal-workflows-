@@ -85,6 +85,8 @@ Number tasks across the message. Link every task name.
 *⏳ No movement today*
 3. <URL|Task> · due [Mon D][ · Slack note, if any][ · _(added late)_ if marked added late]
 
+"No movement" lists ONLY tasks that were due today, overdue, or added via "🆕". Tasks from the morning's "Later this week" / "Next week" / "Ongoing" sections appear only under ✅ Done or 🔄 Moved if they changed; otherwise leave them out.
+
 _Anything to carry over or flag for tomorrow? Just reply here._
 
 Omit any empty section. If there were no tasks at all, send a short note that today was clear, plus the carry-over line. Post it as a top-level message in the person's channel.

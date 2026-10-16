@@ -4,7 +4,12 @@ A three-part weekday loop that posts each pilot member's Notion tasks in the mor
 
 ## What the pilot member sees
 
-1. **Morning (8:30am ET for Rachel, 7:30am PT for Patrick):** Baxter posts tasks due today, grouped by project, plus the 3 most recently overdue tasks and a count of older ones. Ongoing tasks are left out of the overdue list. Every task is numbered and links to Notion.
+1. **Morning (8:30am ET for Rachel, 7:30am PT for Patrick):** Baxter posts tasks due today, grouped by project. Then three short sections, each showing the top 3 and a count of the rest:
+   - **Overdue:** most recently overdue first, excluding Ongoing.
+   - **Later this week:** due tomorrow through Friday, soonest first. On Fridays this becomes **Next week** (Mon–Fri).
+   - **Ongoing:** tasks with status Ongoing, soonest due date first, undated last.
+
+   Every task is numbered and links to Notion, and no task appears twice.
 2. **During the day:** the person replies in the morning thread in plain language, for example "push 3 to Fri", "move 2 to Mon 2pm", "sent it", or a progress note. Baxter updates Notion within the hour and confirms in the thread.
    - **New tasks due today:** every hour Baxter also checks Notion for tasks assigned to the person that became due today after the morning post (newly created, or re-dated to today). It adds them to the morning thread in one batched "🆕 Added since this morning" reply, continuing the numbering. Tasks a person assigned @mention the owner. Tasks created from meetings (with a linked `Meeting` in Notion) are grouped under "From today's meetings", and if those are the only new tasks there's no @mention.
 3. **5pm local:** Baxter posts an EOD check with ✅ Done, 🔄 Moved and ⏳ No movement, then asks "Anything to carry over or flag for tomorrow? Just reply here." Before building it, the EOD applies any late replies, runs a final check for tasks newly due today, and re-checks Notion. Tasks added at 3:30pm or later are marked _(added late)_ so they don't read as slippage. Replies are applied before the next morning's list.

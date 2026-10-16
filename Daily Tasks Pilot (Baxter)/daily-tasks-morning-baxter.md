@@ -61,6 +61,8 @@ Open statuses: Backlog, Not started, In progress, Ongoing, Under Review By Scrib
 Query tasks where `Assign` contains the person's Notion user ID and Status is open. Using the person's local date as TODAY:
 - **Today**: Due Date start = TODAY, or a date range that includes TODAY. If a task has a time, show it.
 - **Overdue**: Due Date before TODAY, Status is NOT Ongoing (Ongoing tasks are long-running and would flood the list). Sort by due date descending (most recently overdue first). Keep the top 3; count the rest.
+- **Later this week**: Due Date start after TODAY through this Friday, Status is NOT Ongoing. If TODAY is Friday, use next Monday–Friday instead and title the section "Next week". Sort by due date ascending (soonest first). Keep the top 3; count the rest.
+- **Ongoing**: Status = Ongoing, not already listed under Today. Sort by due date ascending, undated last. Keep the top 3; count the rest.
 For each task, fetch the linked project page title(s) from the `Task` relation. If there is no project, group it under "No project linked".
 
 ## STEP 3 — BUILD THE MESSAGE
@@ -81,10 +83,21 @@ Good morning, [Name]! Here's what's on deck today.
 … (max 3)
 _+N older overdue tasks. Worth a cleanup pass in <https://app.notion.com/p/36e56cd2373b8325939281a80a6cb5d9|Notion>._ (only if N > 0)
 
+*Later this week* (or *Next week* on Fridays)
+7. <URL|Task name> · due [Mon D] · [Project]
+… (max 3)
+_+N more this week._ (only if N > 0; "next week" on Fridays)
+
+*Ongoing*
+10. <URL|Task name> · [Project][ · due [Mon D] if dated]
+… (max 3)
+_+N more ongoing._ (only if N > 0)
+
 _Need to push anything back? Reply in this thread (e.g. "push 3 to Fri" or "move 2 to Mon 2pm") and I'll update Notion. Progress updates welcome too._
 
 Rules:
-- If nothing is due today, say "Nothing due today 🎉" in place of the project groups, and still show Overdue if any.
+- If nothing is due today, say "Nothing due today 🎉" in place of the project groups, and still show the other sections.
+- Omit any of Overdue / Later this week / Ongoing when empty. Never list the same task twice.
 - Never invent tasks. Only show what the query returned.
 
 ## STEP 4 — SEND
