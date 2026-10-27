@@ -6,6 +6,7 @@ A scheduled Claude agent that makes sure every HubSpot deal with an upcoming eve
 
 Runs every weekday at 9am EDT. On each run it:
 
+0. Applies Rachel's replies to the previous DMs (see "Replying to Baxter" below)
 1. Fetches HubSpot deals where `event_date` falls within the next 28 days, **or** that have a HubSpot meeting linked to the deal in the next 28 days (Closed Lost excluded)
 2. Finds the deal's existing Notion project using tiered matching (see below)
 3. Creates a new Notion project only when there is no certain or possible match, with Tags derived from the deal's `service_type`
@@ -23,7 +24,22 @@ All projects are loaded once per run with a SQL query on the Projects data sourc
 | 2 — possible | Open project (not Done/Lost) where one name contains the other, the project name contains the deal's company name, or half the key words of the shorter name overlap | Don't create, don't link. Listed in the DM under "Possible existing project — please confirm" |
 | 3 — none | No match | Create the project |
 
-To confirm a Tier 2 match, add the HubSpot deal link to the project's notes (or set `notion_project_url` on the deal). It becomes a Tier 1 match on the next run.
+To confirm a Tier 2 match, reply to Baxter's DM (below), or add the HubSpot deal link to the project's notes yourself. Either way it becomes a Tier 1 match.
+
+## Replying to Baxter
+
+Baxter's DM numbers every item that needs Rachel. She replies in the DM thread in plain language; the next weekday run (9am) applies the replies first, confirms in the thread ("Done ✅ …"), and lists them under "↩️ Applied from your replies".
+
+| Reply | Effect |
+| --- | --- |
+| `1 yes` | Link the deal to the suggested project (deal URL appended to project notes; `notion_project_url` and `drive_folder` set on the deal) |
+| `1 no` | Create a new project + Drive folder for the deal; never asked again |
+| `1 → [project name]` | Link the deal to a different named project |
+| `2 → [folder]` | Move a folder created in the Drive root into that top-level folder |
+| `skip 3` | Leave it |
+| Anything unclear | Baxter asks one question in the thread and changes nothing |
+
+Only Rachel's replies count; bot messages and @Claude mentions are ignored.
 
 ## Notion Database
 
