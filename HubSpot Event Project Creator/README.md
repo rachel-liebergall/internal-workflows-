@@ -4,7 +4,7 @@ A scheduled Claude agent that makes sure every HubSpot deal with an upcoming eve
 
 ## What It Does
 
-Runs every weekday: a full run at 9am ET, plus reply-only runs at 11am, 1pm, 3pm and 5pm ET that just apply Rachel's new replies. On the full run it:
+Runs every weekday at 9am ET. On each run it:
 
 0. Applies Rachel's replies to the previous DMs (see "Replying to Baxter" below)
 1. Fetches HubSpot deals where `event_date` falls within the next 28 days, **or** that have a HubSpot meeting linked to the deal in the next 28 days (Closed Lost excluded)
@@ -28,7 +28,7 @@ To confirm a Tier 2 match, reply to Baxter's DM (below), or add the HubSpot deal
 
 ## Replying to Baxter
 
-Baxter's DM numbers every item that needs Rachel. She replies in the DM thread in plain language. Replies are applied within about 2 hours (runs at 9am, 11am, 1pm, 3pm, 5pm ET on weekdays), confirmed in the thread ("Done ✅ …"), and listed under "↩️ Applied from your replies" in the next morning's DM.
+Baxter's DM numbers every item that needs Rachel. She replies in the DM thread in plain language. Replies are applied within about an hour by [Baxter Reply Router](../Baxter%20Reply%20Router/README.md) (hourly, 9:35am–6:35pm ET weekdays; the 9am run also catches overnight replies), confirmed in the thread ("Done ✅ …"), and listed under "↩️ Applied from your replies" in the next morning's DM.
 
 | Reply | Effect |
 | --- | --- |
