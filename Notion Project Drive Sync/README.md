@@ -6,10 +6,9 @@ Routines that keep the NTN Projects database in sync with Google Drive and HubSp
 
 **Folder Watcher (weekdays, 9:10am EDT):** Scans Notion projects (every status except Lost) for missing Google Drive folder links. For each one, it links an existing matching folder or creates a new folder under the tag-appropriate parent, then updates the project. If no tag matches, it creates the folder in the root and DMs Rachel. It then copies each project's folder link to its HubSpot deal's `drive_folder` field.
 
-**Folder Audit (Fridays, 9am EDT):** Never changes Drive or Notion. Event date = the project's `Event Date`, else Timeline end, else the HubSpot deal's `event_date`.
-- **Nudges project Managers:** if a project folder is still empty and the event is within 2 weeks (before or after), Baxter DMs the project's `Manager` asking them to upload materials. Projects with no Manager are listed for Rachel under "Needs a manager"
+**Folder Audit (Fridays, 9am EDT):** Never changes Drive or Notion. Event date = the project's `Event Date`, else Timeline end, else the HubSpot deal's `event_date`. Only covers projects whose event is from 2 weeks ago onward (or that have no event date); older events are skipped entirely.
+- **Nudges project Managers:** if a project folder is still empty and the event is within 2 weeks (before or after), Baxter DMs the project's `Manager` asking them to upload materials. If no Manager is set, the nudge goes to Rachel
 - Flags for Rachel:
-- **Empty folders after the event:** the event was more than 2 weeks ago and the folder has no files
 - **Missing Drive links**
 - **Broken links:** folder deleted, trashed or moved
 - **Wrong location:** the folder's parent doesn't match the project tag

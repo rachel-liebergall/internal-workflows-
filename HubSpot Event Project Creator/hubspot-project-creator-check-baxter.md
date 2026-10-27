@@ -1,8 +1,8 @@
 ---
 name: hubspot-project-creator-check-baxter
-description: Temporary check (Wed Oct 28 + Thu Oct 29, 2026, 9:30am ET). Verifies that what hubspot-event-project-creator-baxter reported in its 9am DM (projects, folders, HubSpot links, applied replies) really happened, and DMs Rachel a short check-in. Read-only. Disable after Oct 29.
+description: Temporary check (Wed Oct 28, 2026 at 9:30am and 5:30pm ET). Verifies that what hubspot-event-project-creator-baxter reported in its 9am DM (projects, folders, HubSpot links, applied replies) really happened, and DMs Rachel a short check-in. Read-only. Disable after Oct 28.
 trigger_id: trig_01GTLmDEWmcUm1ZXbTBydKzi
-schedule: 30 13 28,29 10 * (UTC)
+schedule: 30 13,21 28 10 * (UTC)
 mcp_connections: Notion, HubSpot, Google Drive
 slack_sender: Baxter bot ($BAXTER_TOKEN)
 ---
