@@ -33,7 +33,7 @@ Do NOT use the Slack MCP tool. Post to Slack via the Slack Web API using Baxter'
 
 **Baxter's bot token:** Stored in the `BAXTER_TOKEN` environment variable. Reference it only as `$BAXTER_TOKEN` inside curl headers. NEVER echo, print, or log the token.
 
-**To post to a channel:** POST to `https://slack.com/api/chat.postMessage` with body `{"channel": "C0BAJHSBHHB", "text": "YOUR MESSAGE", "mrkdwn": true}` and header `Authorization: Bearer $BAXTER_TOKEN`.
+**To post to a channel:** make exactly ONE call: POST to `https://slack.com/api/chat.postMessage` with header `Authorization: Bearer $BAXTER_TOKEN` and body `{"channel": "C0BAJHSBHHB", "text": "📡 HubSpot Deal Signals — [date]", "blocks": [...]}`. Slack splits a plain `text` message longer than ~4,000 characters into several messages, so put the content in `blocks`: one `{"type": "section", "text": {"type": "mrkdwn", "text": "..."}}` per part (title, each signal section, footer). Keep each block's text under 2,900 characters; if a section is longer, show fewer items and raise its "+N more". Build the JSON with Python (json.dumps) and send it with curl `--data-binary @file`. Check the response is `"ok": true`; if Slack rejects the blocks, fix them and retry. Never fall back to sending several messages.
 
 ## STEP 1 — DETERMINE LOOKBACK WINDOW
 Get today's date in America/New_York (`TZ=America/New_York date`).
@@ -114,6 +114,7 @@ Otherwise send:
 _[Total signals found: N] · Sources: HubSpot team-wide email, calls, meetings & notes · Calendars checked: [N]/9[ — missing: names][; any other source that failed]_"
 
 Skip any section with no findings. Keep each section to the 10 most important items; add "+N more" if there are more.
+**One message only:** the whole summary goes out as a single Slack post (see the SLACK section: sections as blocks). Never split it across several posts or thread replies.
 
 ## STEP 7 — DONE
 Stop after sending the message.
