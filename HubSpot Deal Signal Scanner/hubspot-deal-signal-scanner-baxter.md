@@ -80,10 +80,12 @@ External people a team member emailed or met with in the last 4 days (from logge
 Flag: name/email, company domain, team member involved, activity type and date.
 
 ## STEP 6 — COMPOSE AND SEND MESSAGE
+**Pre-send check (mandatory):** before posting, confirm you actually called list_events for all 9 calendars in Step 4 during THIS run. If you haven't (for example, the Calendar tools weren't loaded), stop and do Step 4 now. If the Calendar tools can't be found at all, still post, but put "⚠️ Calendars NOT checked: Google Calendar tools unavailable" as the first line under the title.
 
 If nothing flagged, send:
 "📡 *HubSpot Deal Signals* — [date]
-No signals to flag. ✓"
+No signals to flag. ✓
+_Calendars checked: [N]/9[ — missing: names]_"
 
 Otherwise send:
 "📡 *HubSpot Deal Signals* — [date]
@@ -109,7 +111,7 @@ Otherwise send:
    _[Subject or 1-sentence summary]_
    Not in CRM.
 
-_[Total signals found: N] · Sources: HubSpot team-wide email, calls, meetings & notes; calendars (all 9 team members)[; name any calendar or source that failed]_"
+_[Total signals found: N] · Sources: HubSpot team-wide email, calls, meetings & notes · Calendars checked: [N]/9[ — missing: names][; any other source that failed]_"
 
 Skip any section with no findings. Keep each section to the 10 most important items; add "+N more" if there are more.
 
