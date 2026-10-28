@@ -22,7 +22,7 @@ External = any email address/attendee NOT from @nowtonext.ai (also treat team me
 
 ## DATA SOURCES
 - **HubSpot is the primary, team-wide source.** Every team member's inbox is connected, so their emails are logged as HubSpot EMAIL objects. Do NOT filter emails by owner — scan all of them.
-- **Google Calendar** (connector signed in as Rachel) is a supplement, used only to catch meetings with people who are NOT yet in HubSpot. Pass `calendarId` explicitly for each calendar.
+- **Google Calendar** (connector signed in as Rachel) is a required supplement for every team member's calendar, used to catch meetings with people who are NOT yet in HubSpot. Pass `calendarId` explicitly for each calendar.
 - Do not use Gmail — the team's email is already in HubSpot.
 
 ## OUTPUT
@@ -51,8 +51,9 @@ Group by thread/subject. For each kept thread: external contact(s) (email, compa
 ## STEP 3 — TEAM-WIDE CALLS, MEETINGS, NOTES (HubSpot)
 Search HubSpot CALL, MEETING and NOTE objects created or updated in the last 4 days (meetings: also those whose `hs_meeting_start_time` is in the last 4 days). All owners. For each: associated contacts, companies and deals, owner, and title/subject.
 
-## STEP 4 — CALENDAR SUPPLEMENT (people not in HubSpot)
-Call list_events with explicit `calendarId` for each of: `rachel@nowtonext.ai`, `jess@nowtonext.ai`, `jason@nowtonext.ai`, `macrae@nowtonext.ai` — last 4 days. Keep events with at least one external attendee; skip all-day/travel/hotel blocks. Deduplicate by event ID. If a calendar returns an access error, skip it and note it in the sources line.
+## STEP 4 — CALENDAR SUPPLEMENT (people not in HubSpot) — REQUIRED, never skip
+The Google Calendar tools are deferred: first load them with ToolSearch (query "calendar list_events"). Do NOT post the Slack message until every calendar below has been attempted.
+Call list_events with explicit `calendarId` for EVERY team member's calendar: `rachel@nowtonext.ai`, `jess@nowtonext.ai`, `jason@nowtonext.ai`, `heather@nowtonext.ai`, `macrae@nowtonext.ai`, `welrose@nowtonext.ai`, `aidan@nowtonext.ai`, `liv@nowtonext.ai`, `patrick@nowtonext.ai` — last 4 days. Call them one at a time, not all at once. Keep events with at least one external attendee; skip all-day/travel/hotel blocks. Deduplicate by event ID (the same meeting appears on several calendars — list every team member who attended). If a calendar returns a quota / "resource exhausted" error, pause ~30 seconds and retry it once. If it still fails, or returns an access error, skip it and name it in the sources line.
 Use these events only to (a) add meetings that HubSpot didn't log and (b) find external attendees with no HubSpot contact (Signal E).
 
 ## STEP 5 — MERGE AND APPLY SIGNAL LOGIC
@@ -108,7 +109,7 @@ Otherwise send:
    _[Subject or 1-sentence summary]_
    Not in CRM.
 
-_[Total signals found: N] · Sources: HubSpot team-wide email, calls, meetings & notes; calendars (Rachel, Jess, Jason, Macrae)[; note any source that failed]_"
+_[Total signals found: N] · Sources: HubSpot team-wide email, calls, meetings & notes; calendars (all 9 team members)[; name any calendar or source that failed]_"
 
 Skip any section with no findings. Keep each section to the 10 most important items; add "+N more" if there are more.
 
