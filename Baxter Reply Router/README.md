@@ -17,7 +17,9 @@ Runs hourly at :35 past, 9:35am–6:35pm EDT, weekdays. Each run:
 | 🔍 Drive ↔ Notion Audit | Drive audit report | Move a folder, link a folder, set a project Manager (Rachel only) |
 | Anything else | Any workflow without reply handling | Not acted on; forwarded to Rachel in one "↩️ Replies to Baxter that need you" digest |
 
-4. Confirms in each thread it handled ("Done ✅ …" or "passed to Rachel"), which also marks the replies as handled so they're never processed twice.
+4. Confirms in each thread it handled with a message starting "↩️" ("↩️ Done ✅ …" or "↩️ … passed to Rachel"). That marker is what marks replies as handled, so they're never processed twice. Other Baxter messages in the thread (e.g. reflection-pilot auto-replies) don't count.
+
+Replies don't need a format: the numbered commands are shortcuts. The router also understands names ("the Michigan one"), plain yes/no, and answers to its own follow-up question. If it's unsure, it asks one specific question with its best guess instead of asking you to reformat.
 
 If there's nothing new, it does nothing.
 
@@ -34,4 +36,4 @@ If there's nothing new, it does nothing.
 ## Notes
 
 - The HubSpot Event Project Creator still applies any unhandled replies at its 9am run (same rules), so overnight replies are picked up first thing.
-- Watch item: Baxter's Slack app also relays some of Rachel's DMs to an OpenAI-hosted agent (pilot). If that pilot is on, the same reply could get two answers. Check after the first few days.
+- Known conflict (confirmed Oct 28, 2026): Baxter's Slack app has a "Rachel-only Baxter DM pilot" trigger that relays every message Rachel posts in her Baxter DM, thread replies included, to the OpenAI-hosted reflection agent. That agent may answer with its own format rules. The routines ignore its replies, but Rachel still sees them until the trigger is removed.

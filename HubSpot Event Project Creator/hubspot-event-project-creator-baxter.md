@@ -26,18 +26,18 @@ Headers on every call: `Authorization: Bearer $BAXTER_TOKEN`, `Content-Type: app
 - Baxter's user ID: GET https://slack.com/api/auth.test → `user_id` (BAXTER_ID)
 
 ## STEP 0 — APPLY RACHEL'S REPLIES (do this first)
-In Rachel's DM, find Baxter's messages from the last 7 days that start with "📋 *HubSpot → Notion → Drive". For each, read its thread. Take only Rachel's replies (user U0ACE0F48F6) posted AFTER Baxter's last message in that thread (earlier ones were already handled). Ignore messages from bots/apps and messages that @mention Claude or another app.
+In Rachel's DM, find Baxter's messages from the last 7 days that start with "📋 *HubSpot → Notion → Drive". For each, read its thread. Take only Rachel's replies (user U0ACE0F48F6) posted AFTER the last handled marker in that thread — a Baxter thread message starting with "↩️" or "Done ✅" (earlier replies were already handled). Ignore every other Baxter message in the thread: Baxter's Slack app has a separate reflection pilot that may auto-reply to Rachel's DMs, and those replies do NOT mean her message was handled. Ignore messages from bots/apps and messages that @mention Claude or another app.
 
-The parent message numbers each item that needs Rachel ("1.", "2.", …) and contains the deal and project/folder links. Interpret each reply in plain language, for example:
+The parent message numbers each item that needs Rachel ("1.", "2.", …) and contains the deal and project/folder links. **Read replies the way a person would — never require a format.** Match a reply to an item by number, OR by any deal / company / project / folder name it mentions (partial or informal names count, e.g. "the Michigan one", "UKG"), OR by context: if the message has only one item, the reply is about it; a bare "yes" / "all good" applies to every possible-match item. Treat "yep", "correct", "same", "that's the one", "link them" as yes; "nope", "different client", "separate", "make a new one" as no; "put it in X" as a folder move. Combine several replies, and read a reply to your own earlier question as its answer. Examples:
 - **"1 yes" / "yes to 1" / "1 is right"** on a *possible existing project* item → link them: append `HubSpot Deal: [deal URL]` to that project's `Notes (migrated)` (keep existing text), set the deal's `notion_project_url` to the project URL, and if the project has a `Google Drive Folder`, set the deal's `drive_folder` to it.
 - **"1 no" / "not a match" / "new project"** → create a new project and Drive folder for that deal exactly as in Steps 4–6 (this puts the deal ID in the new project's notes, so it becomes a certain match and is never asked about again).
 - **"1 → [project name]" / "1 is actually [project name]"** → find that project in the Projects list (exact or normalized name match; if several match, ask) and link it as for "yes".
 - **"2 → [folder name]" / "move 2 to [folder]"** on a *folder created in root* item → move that Drive folder into the named top-level subfolder of "Now to Next Company Files" (match name case-insensitively). Update the project's `Google Drive Folder` and the deal's `drive_folder` if the link changes.
 - **"skip 3" / "ignore 3"** → do nothing for that item.
-- **Unclear** (which item, which project, which folder) → change nothing; ask one short question in the thread.
+- **Still unclear** (which item, which project, which folder) → change nothing; ask ONE specific question proposing your best reading, e.g. "↩️ Just checking — link <deal> to <project>? Reply yes and I'll do it." Never ask Rachel to reformat her reply.
 
 After handling a thread, post ONE thread reply listing what changed, e.g.
-"Done ✅
+"↩️ Done ✅
 • 1. <deal URL|Deal> linked to <project URL|Project>
 • 2. Folder moved to Client Delivery"
 This reply also marks those replies as handled. If nothing changed and you asked no question, post nothing.
@@ -132,6 +132,6 @@ If Step 0 applied anything, or this run created a project, created or linked a f
 *⚠️ Needs review:*
 2. [Deal Name] — [multiple certain matches: links] / [folder created in root: link]
 
-_Reply in this thread by number: "1 yes" to link, "1 no" for a new project, "1 → [project name]" to link a different project, "2 → [folder]" to move a folder, "skip 3" to leave it. Replies are applied within about an hour (weekdays, 9am–6pm ET)._"
+_Reply in this thread however is easiest — by number or in your own words (e.g. "1 yes", "the second one is a new client", "move 2 to Signal"). Replies are applied within about an hour (weekdays, 9am–6pm ET)._"
 
 Omit empty sections, and omit the reply line if nothing is numbered. If nothing changed and nothing needs review, send nothing.
