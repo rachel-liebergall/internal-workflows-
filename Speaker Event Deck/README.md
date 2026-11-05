@@ -19,15 +19,26 @@ Drafts a speaker deck for every upcoming speaking event, on the official Now to 
    - The NTN Speaker Deck Playbook supplies past learnings.
 5. **Writes the deck slide by slide:** layout, claim title, body, speaker notes and sources for each slide. Unknowns are marked `[NEEDS INPUT]`, never invented.
 6. **Saves to the event's Drive folder:** project folder → deal folder → a new folder in Upcoming Speaker Events.
-   - **Deck:** a copy of the official *NTN Google Slides General Template*, titled `[Project] - Speaker Deck - DRAFT - MM/DD/YY`.
-   - **Content doc:** `[Project] - Speaker Deck Content - MM/DD/YY`, with the slide-by-slide content, finishing steps, input gaps, Brand QA results and sources.
-   - If the folder holds a client template, it maps the content to that template instead (Workflow B).
-7. **Creates a Notion task** "Review speaker deck: [Project]" for the leaders, due the day before the event, with a request to add Deck Notes afterwards.
+   - **Deck:** a populated copy of the official *NTN Google Slides General Template*, titled `[Project] - Speaker Deck - DRAFT - MM/DD/YY`, built by the deck builder below. Every slide has text and speaker notes, and gaps are marked `[NEEDS INPUT]` on the slide.
+   - If the folder holds a client template, it writes a content doc mapped to that template instead (Workflow B).
+7. **Creates a Notion task** "Review speaker deck: [Project]" for the leaders, due the day before the event. It lists the open inputs, Brand QA results and sources, and asks for Deck Notes afterwards.
 8. **DMs each leader as Baxter** with the links. Rachel gets a one-line heads-up if she isn't a leader.
 
-## Current limitation: slides are filled in by hand
+## Deck builder (fills the slides)
 
-The Google Drive connector can copy the template but can't edit slide text, so the leader pastes the content from the doc into the copied deck. Next step is a Google service account with Slides API access, stored as an environment variable, so the routine can fill the slides itself (`batchUpdate`: duplicate layouts, replace text, add speaker notes).
+The routine fills the deck through **NTN Deck Builder**, a small Google Apps Script web app ([deck-builder.gs](deck-builder.gs)) that runs as Rachel. It does two things:
+- `catalog` lists every template slide's text boxes.
+- `build` copies the official template into the event folder, duplicates the chosen layouts in order, fills each text box and the speaker notes, removes the unused template slides, and reports any placeholders left unfilled.
+
+It only reads the template and writes the new copy, and refuses folders outside the company file repository. Requests must include a shared secret.
+
+**One-time setup (signed in as rachel@nowtonext.ai):**
+1. Open https://script.new, name the project "NTN Deck Builder", and paste in `deck-builder.gs`.
+2. Run `setup` once, approve the permissions, and copy the secret from the execution log.
+3. Deploy → New deployment → Web app. Execute as: Me. Who has access: Anyone. Copy the Web app URL.
+4. In the Claude Code environment the routines use (the one holding `BAXTER_TOKEN`), add `DECK_BUILDER_URL` and `DECK_BUILDER_SECRET`.
+
+To rotate the secret, run `setup` again and update `DECK_BUILDER_SECRET`. If the variables are missing or the builder fails twice, the routine falls back to copying the template plus a slide-by-slide content doc, and says so in its messages.
 
 ## Configuration
 

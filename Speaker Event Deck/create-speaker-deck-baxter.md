@@ -57,8 +57,10 @@ Run the Project fetching skill for this event across: the Notion project page an
 Pin down the event basics: event name, organizer, date/time, format, talk length, audience, speaker(s), title/topic, and any organizer requirements (slide count, aspect ratio, deadline, client template). Keep the harvest map with links.
 
 ## STEP 7 — WRITE THE DECK CONTENT
+First get the template catalog from the deck builder (see DECK BUILDER below): `{"action": "catalog"}` returns every template slide with its numbered text elements and their placeholder text. Slides 1–2 are instructions/colors and are never used. Useful defaults: 3 title, 4 About Us, 5 agenda, 9/12/13 statement, 8/10 evidence and stats, 14 section divider, 11 comparison, 24 five-point, 30 Q&A, 31 Let's connect (Jess & Jason), 32 Jess, 33 Jason. Always confirm against the live catalog.
 Write the deck slide by slide following Brand Design Checker Creation Mode. For each slide:
-- **Layout:** the approved layout in the NTN template to use (name it as the Brand Design System reference does)
+- **Layout:** the template slide number whose layout fits the content
+- **Text:** a value for every placeholder element on that slide, by element index; use "" to clear an element you don't need. Keep each value about as long as the placeholder so it fits the box.
 - **Title:** a claim, not a topic (8 words or fewer)
 - **Body:** short; cut copy rather than shrink type
 - **Speaker notes:** 2–4 sentences to say out loud
@@ -69,14 +71,17 @@ Then run the Brand Design Checker QA Checklist against the content, fix what you
 
 ## STEP 8 — SAVE TO DRIVE
 **Folder:** the project's `Google Drive Folder` → else the deal's `drive_folder` → else create a folder named after the project inside Upcoming Speaker Events (and say so in the messages).
-**Client template?** If the folder holds a client-provided template (a .pptx/.potx or Slides file with "template" in the title that is not the NTN template), do not copy the NTN template: map the content to the client template's layouts instead (Presentation Template Instructions, Workflow B) and say so.
-Otherwise:
-1. **Deck:** `copy_file` the official template (ID above) into the folder, titled "[Project Name] - Speaker Deck - DRAFT - MM/DD/YY". Do not edit or move the original template.
-2. **Content doc:** `create_file` a Google Doc in the same folder titled "[Project Name] - Speaker Deck Content - MM/DD/YY" (upload as `text/html` with headings so it converts cleanly). Include, in order: the event basics; "How to finish this deck" (open the deck, duplicate each named layout, paste the title/body/notes, delete unused template slides, rename to [Finalized] when done); the slides; the [NEEDS INPUT] list; the Brand QA results; and the harvest map with source links.
-If the copy or the doc fails, stop and DM Rachel the error instead of messaging the leaders.
+**Client template?** If the folder holds a client-provided template (a .pptx/.potx or Slides file with "template" in the title that is not the NTN template), do not build on the NTN template: write the content doc (fallback below), mapped to the client template's layouts (Presentation Template Instructions, Workflow B), and say so.
+Otherwise **build the deck** with the deck builder: `{"action": "build", "folderId": "...", "title": "[Project Name] - Speaker Deck - DRAFT - MM/DD/YY", "slides": [{"templateSlide": 3, "text": {"0": "...", "1": ""}, "notes": "speaker notes"}, ...]}`. It returns the deck `url` and a `report`. If the report lists leftover placeholders or errors, fix the spec and rebuild once (the first copy stays in the folder: say so and include its link so a person can delete it), otherwise list what's left as [NEEDS INPUT].
+**Fallback (deck builder unavailable or failing twice):** `copy_file` the official template into the folder with the same title, and `create_file` a Google Doc "[Project Name] - Speaker Deck Content - MM/DD/YY" (upload as `text/html`) with the slide-by-slide content and "How to finish this deck" steps, so a person can paste it in. Say in the messages that the deck was not filled automatically and why.
+If nothing could be saved, stop and DM Rachel the error instead of messaging the leaders.
+
+## DECK BUILDER
+An Apps Script web app that copies the official template and fills it. URL in `DECK_BUILDER_URL`, shared secret in `DECK_BUILDER_SECRET`. NEVER echo, print, or log the secret or a file containing it.
+Call it by writing the request JSON with Python (read the secret from the environment inside Python, `json.dump` to a file, print nothing) and POSTing it: `curl -sL -X POST "$DECK_BUILDER_URL" -H "Content-Type: application/json" --data-binary @/tmp/deck_req.json`. Delete the request file afterwards. If either variable is missing, use the fallback above.
 
 ## STEP 9 — REVIEW TASK
-Create a task in Tasks: `Task Name` "Review speaker deck: [Project Name]"; `Assign` the leaders (Notion users matched by @nowtonext.ai email); `Task` = the Notion project; `Due Date` = the day before the event; `Priority` "High"; `Status` "Not started"; `Tags` ["Operations"]; `Description` with the deck, content doc and folder links. In the page body, add: "After the event, add a line in Deck Notes on what worked, what you changed and how it landed. It improves the next deck."
+Create a task in Tasks: `Task Name` "Review speaker deck: [Project Name]"; `Assign` the leaders (Notion users matched by @nowtonext.ai email); `Task` = the Notion project; `Due Date` = the day before the event; `Priority` "High"; `Status` "Not started"; `Tags` ["Operations"]; `Description` with the deck and folder links. In the page body, add: the event basics; the [NEEDS INPUT] list (slide number + what's missing); the Brand QA results; the harvest map with source links; and "After the event, add a line in Deck Notes on what worked, what you changed and how it landed. It improves the next deck."
 
 ## STEP 10 — MESSAGE THE LEADERS (Baxter)
 Send each leader ONE Slack DM via the Slack Web API with Baxter's bot token. Do NOT use any Slack MCP tool. The token is in `BAXTER_TOKEN`: reference it only as `$BAXTER_TOKEN` inside curl headers. NEVER echo, print, or log it.
@@ -84,16 +89,16 @@ Send each leader ONE Slack DM via the Slack Web API with Baxter's bot token. Do 
 - Send: POST https://slack.com/api/chat.postMessage `{"channel": "...", "text": "...", "mrkdwn": true}` with header `Authorization: Bearer $BAXTER_TOKEN`
 Message:
 "🎤 *Speaker deck ready for review: [Event name]* ([event date], [N] days out)
-• Deck, on the official template: <[deck URL]|[Project Name] - Speaker Deck - DRAFT>
-• Slide-by-slide content to paste in: <[doc URL]|Speaker Deck Content>
+• Deck ([S] slides, official template, speaker notes included): <[deck URL]|[Project Name] - Speaker Deck - DRAFT>
 • Drive folder: <[folder URL]|Open folder>
-• Review task: <[task URL]|Review speaker deck>
-[N] spots need your input; they're marked [NEEDS INPUT] in the content doc.
+• Review task (sources + open items): <[task URL]|Review speaker deck>
+[N] spots need your input; they're marked [NEEDS INPUT] on the slides and listed on the task.
 After the event, please add a line in Deck Notes on the task. It helps the next deck."
-(Adjust the first bullet if a client template was used or the folder was newly created.)
+(Adjust if the fallback or a client template was used, or the folder was newly created.)
 If Rachel is not one of the leaders, also send her a one-line DM: "🎤 Speaker deck drafted for [Event] ([date]); sent to [leader names]: <[task URL]|review task>."
 
 ## RULES
-- One deck per event. Never create a second deck, doc or review task for an event that already has one.
+- One deck per event. Never create a second deck, doc or review task for an event that already has one (the single rebuild in Step 8 is the only exception).
 - Never edit the original template, the Notion project or the HubSpot deal.
+- Put [NEEDS INPUT: …] directly in the slide text where a fact is missing, so the gap is visible in the deck itself.
 - If nothing qualified, send nothing.
