@@ -8,7 +8,7 @@ Runs at 9am and 2pm ET on weekdays. Each run:
 
 1. Finds open tasks in the Notion **Tasks** database whose title starts with "Onboard " (e.g. "Onboard Leah"). Tasks that only mention onboarding, such as "Track Horizon onboarding", are ignored.
 2. Skips anyone who already has an "Orientation: [Name]" task.
-3. Otherwise creates **Orientation: [Name]** as a subtask of the Onboard task: High priority, Operations tag, the Onboard task's due date, and a 5-step checklist that mirrors "Day 0: Connect to our shared brain" in the [New Team Member Guide](https://app.notion.com/p/3e356cd2373b81c08eb6c9fde68628f4).
+3. Otherwise creates **Orientation: [Name]** as a subtask of the Onboard task: High priority, Operations tag, the Onboard task's due date, and a 6-step checklist (Claude, ChatGPT, Granola, Zoom, About me, try it) that mirrors "Day 0: Connect to our shared brain" in the [New Team Member Guide](https://app.notion.com/p/3e356cd2373b81c08eb6c9fde68628f4).
 4. Assigns it to the new person if they already exist in Notion with an @nowtonext.ai email; otherwise to the Onboard task's assignees. A later run adds the new person once they're in Notion.
 5. DMs Rachel (as Baxter) only when it created or reassigned something.
 

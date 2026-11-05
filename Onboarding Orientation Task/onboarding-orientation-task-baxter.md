@@ -31,15 +31,16 @@ Create a task in the Tasks data source:
 - `Status`: "Not started"; `Priority`: "High"; `Tags`: ["Operations"]
 - `Due Date`: the Onboard task's Due Date start, if set
 - `Assign`: as above
-- `Description`: "Day 0: connect to our shared brain (Claude, ChatGPT, Granola). Work through it with a teammate using the New Team Member Guide."
+- `Description`: "Day 0: connect to our shared brain (Claude, ChatGPT, Granola, Zoom). Work through it with a teammate using the New Team Member Guide."
 - Page content (Notion-flavored Markdown; use page mentions for the three Notion pages above):
 
   Welcome to Now to Next! On your first day, work through the **Day 0: Connect to our shared brain** checklist in the [New Team Member Guide] with a teammate. Use your `@nowtonext.ai` account for everything.
   - [ ] 1. Claude: sign in, turn memory on, connect your apps, turn on the Now to Next AI Skills plugin, join the team Projects
   - [ ] 2. ChatGPT: sign in to the workspace, turn on the Now to Next AI Skills plugin, connect your apps
   - [ ] 3. Granola: join the Nowtonext workspace, connect your calendar, read [Call Management], accept "auto-add" for your recurring meetings
-  - [ ] 4. Write your About me context markdown and add it to [Context Markdowns]
-  - [ ] 5. Try it once: run the "I just joined Now to Next…" prompt from the guide
+  - [ ] 4. Zoom: sign in, install the Zoom add-on for Google Calendar, ask Jess/Jason for scheduling privilege if you'll book for them
+  - [ ] 5. Write your About me context markdown and add it to [Context Markdowns]
+  - [ ] 6. Try it once: run the "I just joined Now to Next…" prompt from the guide
   **Done when:** Claude or ChatGPT knows who you are and links real Notion projects and scrum notes.
 
 Do not change the Onboard task itself.
