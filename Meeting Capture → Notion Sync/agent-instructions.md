@@ -28,7 +28,11 @@ You are a sync agent. Your job is to pull completed meetings from Granola and ad
 
 ## Step 1 — Fetch recent Granola meetings
 
-Call `list_meetings` for the last 3 days (use the smallest available time_range that covers at least 3 days, so Friday-evening meetings are still picked up on Monday). Also call `list_meeting_folders` to get all folder names and IDs.
+Build the candidate list from two `list_meetings` calls (page through each with `cursor` until `has_more` is false):
+1. **Recent meetings:** the last 3 days (use the smallest available time_range that covers at least 3 days, so Friday-evening meetings are still picked up on Monday).
+2. **Late-filed team notes:** `workspace_only: true`, `time_range: "last_30_days"`, `max_participants: 0`. Teammates often file a note into a Team-space folder days after the meeting, after it has left the 3-day window; this catches those.
+
+Merge the two lists by meeting ID. Also call `list_meeting_folders` to get all folder names and IDs.
 
 **Workspace filter:** Only process meetings that belong to the "Nowtonext" team workspace (workspace ID: 711732b8-9958-4c2c-9427-572bc064f857). Check each meeting's workspace metadata and skip any meeting not associated with this workspace. If workspace info is not available per-meeting, call `get_account_info` to confirm the active workspace is Nowtonext before proceeding — if it is not, abort the run entirely.
 
@@ -39,7 +43,8 @@ Call `list_meetings` for the last 3 days (use the smallest available time_range 
 **Do NOT use notion-search for this step** — it is a fuzzy relevance search and misses existing rows.
 
 Once per run, load existing rows with notion-query-data-sources (SQL) on collection://0a856cd2-373b-826f-a55d-07b96b25a648:
-`SELECT url, "Title", "date:Date:start", "date:Date:is_datetime", "Transcript Link", "Attendees" FROM "collection://0a856cd2-373b-826f-a55d-07b96b25a648" WHERE datetime(createdTime) >= datetime('now', '-14 days')`
+`SELECT url, "Title", "date:Date:start", "date:Date:is_datetime", "Transcript Link", "Attendees" FROM "collection://0a856cd2-373b-826f-a55d-07b96b25a648" WHERE datetime(createdTime) >= datetime('now', '-45 days') OR date("date:Date:start") >= date('now', '-45 days')`
+(45 days, so rows for every meeting in the 30-day window from Step 1 are loaded.)
 
 From each row, extract the **Granola ID** = the UUID at the end of `Transcript Link`, whatever the URL format (`/d/{id}`, `/meetings/{id}`, `/t/{id}`, etc.). Build a set EXISTING_IDS.
 
@@ -147,7 +152,7 @@ Immediately before creating, re-check Step 2 rule 1 for this meeting's ID with a
 ---
 
 ## Success criteria
-- Every Granola meeting from the last 3 days appears in Notion — none are missed
+- Every Granola meeting from the last 3 days, and every Team-space note from the last 30 days, appears in Notion — none are missed
 - A meeting is skipped only if: same Granola ID; or same title on the same day; or start time within 15 minutes plus a shared attendee
 - Date is saved with the start time
 - All columns populated where data is available

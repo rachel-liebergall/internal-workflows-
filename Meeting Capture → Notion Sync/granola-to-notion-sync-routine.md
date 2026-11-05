@@ -18,7 +18,7 @@ Manage at: https://claude.ai/code/routines/trig_013dtp9xwm17AkWeFjEwjhdx
 
 ## Scope
 
-Scans the **Nowtonext** enterprise workspace (ID: `711732b8-9958-4c2c-9427-572bc064f857`) on the Granola enterprise account (`rachel@nowtonext.ai`). Each run checks the last 3 days of meetings. Aborts if the active workspace is not Nowtonext.
+Scans the **Nowtonext** enterprise workspace (ID: `711732b8-9958-4c2c-9427-572bc064f857`) on the Granola enterprise account (`rachel@nowtonext.ai`). Each run checks the last 3 days of meetings, plus Team-space notes from the last 30 days (to catch notes filed into a team folder after the meeting). Aborts if the active workspace is not Nowtonext.
 
 ## Databases
 
@@ -31,10 +31,10 @@ Scans the **Nowtonext** enterprise workspace (ID: `711732b8-9958-4c2c-9427-572bc
 ## Workflow
 
 ### Step 1 — Fetch recent Granola meetings
-Calls `list_meetings` for the last 3 days and `list_meeting_folders` for folder names. Filters to the Nowtonext workspace only.
+Calls `list_meetings` twice: the last 3 days, and `workspace_only` for the last 30 days (late-filed team notes). Merges by meeting ID and calls `list_meeting_folders` for folder names. Filters to the Nowtonext workspace only.
 
 ### Step 2 — Skip already-synced meetings
-Loads rows from the last 14 days once with SQL (never `notion-search`, which is fuzzy) and skips a meeting **only** if one of these matches:
+Loads rows from the last 45 days once with SQL (never `notion-search`, which is fuzzy) and skips a meeting **only** if one of these matches:
 1. **Same Granola ID** — the UUID at the end of an existing row's Transcript Link (any URL format: `/d/`, `/meetings/`, …)
 2. **Same title, same day** — same normalized title on the same calendar date (same title on a different day is a recurring meeting and is added)
 3. **Same start time + shared attendee** — starts within 15 minutes of an existing row and shares at least one attendee (two teammates recording the same call under different titles). Only applies to rows whose Date includes a time.
@@ -101,7 +101,7 @@ Creates a new page in Team Granola Capture with all columns populated.
 | Notion | claude.ai Notion MCP |
 
 ## Success Criteria
-- Every completed Granola meeting from the last 3 days appears as exactly one row
+- Every completed Granola meeting from the last 3 days, and every Team-space note from the last 30 days, appears as exactly one row
 - Internal/External classified correctly
 - Projects relation mapped when a confident match exists
 
@@ -110,3 +110,4 @@ Creates a new page in Team Granola Capture with all columns populated.
 - Remote trigger runs independently of user's device
 - Be conservative on Projects matching — blank is better than wrong
 - Oct 16, 2026: dedupe rebuilt on exact Granola-ID matching (old check looked for `/meetings/` links while saved links are `/d/`), schedule set to weekdays 7am–7pm; skip only on a certain match (same ID, same title same day, or same start time + shared attendee), otherwise add
+- Nov 5, 2026: added a 30-day Team-space pass. Teammates' notes filed into a team folder more than 3 days after the meeting were never synced (8 of 39 in the prior 30 days). Existing-row check widened from 14 to 45 days to match.
