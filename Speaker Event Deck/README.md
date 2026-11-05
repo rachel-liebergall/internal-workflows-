@@ -1,52 +1,45 @@
 # Speaker Event Deck
 
-Two Claude Code remote routines that handle the full speaker deck lifecycle — from creation through post-event learning.
+Drafts a speaker deck for every upcoming speaking event, on the official Now to Next template, three days before the event. It saves the draft to the event's Drive folder and messages the event leaders that it's ready for review. Rebuilt Nov 5, 2026. It replaces the earlier version, which watched for Notion "deck" tasks and built an off-brand PPTX from scratch.
 
-## Routines
+## How it works
 
-### 1. `create-speaker-deck`
-Runs automatically at **9am and 1pm ET daily**. Finds any pending deck task in Notion, gathers context, generates a PPTX, and uploads everything to Google Drive.
+`create-speaker-deck-baxter` runs at 9am ET on weekdays.
 
-**Trigger:** Create a Notion task with "deck", "speaker", or "presentation" in the title, status anything except Done/Cancelled/To Review.
+1. **Finds speaking events 1–3 days out** (on Fridays 1–4, so Tuesday events are covered before the weekend). It uses two sources:
+   - HubSpot deals with Service Type = The Signal;
+   - Notion projects tagged The Signal, or with Speaker(s) set.
+   The first run that sees an event builds its deck, so in practice that's 3 days before.
+2. **Skips events that already have a deck,** meaning a "Review speaker deck: …" task already exists, or the folder already holds a "Speaker Deck" file.
+3. **Leaders** are the Notion project's Manager plus the HubSpot deal owner. If neither is set, the leader is Rachel.
+4. **Loads the skills:**
+   - **Project fetching** (project matching) gathers context and a harvest map from Notion, HubSpot, the event's Drive folder, Granola and past Signal decks.
+   - **Brand Design Checker** handles layout choice, claim titles, cited numbers and the QA checklist.
+   - **Brand Setup**, plus Jess Voice or Jason Voice according to Speaker(s), sets the voice.
+   - The NTN Speaker Deck Playbook supplies past learnings.
+5. **Writes the deck slide by slide:** layout, claim title, body, speaker notes and sources for each slide. Unknowns are marked `[NEEDS INPUT]`, never invented.
+6. **Saves to the event's Drive folder:** project folder → deal folder → a new folder in Upcoming Speaker Events.
+   - **Deck:** a copy of the official *NTN Google Slides General Template*, titled `[Project] - Speaker Deck - DRAFT - MM/DD/YY`.
+   - **Content doc:** `[Project] - Speaker Deck Content - MM/DD/YY`, with the slide-by-slide content, finishing steps, input gaps, Brand QA results and sources.
+   - If the folder holds a client template, it maps the content to that template instead (Workflow B).
+7. **Creates a Notion task** "Review speaker deck: [Project]" for the leaders, due the day before the event, with a request to add Deck Notes afterwards.
+8. **DMs each leader as Baxter** with the links. Rachel gets a one-line heads-up if she isn't a leader.
 
-### 2. `deck-reflection-agent`
-Runs every **Monday at 9am ET**. Reviews completed deck tasks, enforces Deck Notes, extracts learnings, and updates the Deck Playbook.
+## Current limitation: slides are filled in by hand
 
-**Enforcement:** If a deck task is marked Done without Deck Notes filled in, the routine reverts it to "To Review" and DMs the owner.
+The Google Drive connector can copy the template but can't edit slide text, so the leader pastes the content from the doc into the copied deck. Next step is a Google service account with Slides API access, stored as an environment variable, so the routine can fill the slides itself (`batchUpdate`: duplicate layouts, replace text, add speaker notes).
 
----
+## Configuration
 
-## Full Workflow
-
-1. Create a Notion task with "deck" or "speaker" in the title
-2. `create-speaker-deck` picks it up → builds the PPTX → uploads to Drive → sets task to **To Review** → Slacks owners with links and a reminder to fill in Deck Notes after the presentation
-3. After the event, owner fills in **Deck Notes** on the Notion task and marks it **Done**
-4. `deck-reflection-agent` extracts learnings from Deck Notes → appends to the **NTN Speaker Deck Playbook** in Drive → future decks are informed by this playbook
-5. If Done is marked without Deck Notes → routine reverts to To Review and sends a Slack nudge
-
----
-
-## Routine Configuration
-
-| Routine | ID | Schedule | MCPs |
-| --- | --- | --- | --- |
-| create-speaker-deck | `trig_01YPMLFnticN545GzH7ssfFh` | 9am + 1pm ET daily | Notion, Drive, Gmail, Calendar, Granola, Slack |
-| deck-reflection-agent | `trig_01UELX1NVCc158G3hGMKHtf9` | Monday 9am ET | Notion, Drive, Slack |
-
-Manage routines: https://claude.ai/code/routines
-
-## Key IDs
-
-| Resource | ID |
+| Field | Value |
 | --- | --- |
-| Upcoming Speaker Events (Drive folder) | `1RERSeJYFD08Bl3ysU9U1cMPezwYPoJC7` |
-| NTN Speaker Deck Playbook (Drive doc) | `191e-gvOlEAZ_BfuoEJUIZNWWML6XOGl9_GXBEES_g1w` |
-| Projects (Notion DB) | `15456cd2373b82e2bca10190134ace79` |
-| Tasks (Notion DB) | `36e56cd2373b8325939281a80a6cb5d9` |
+| Routine | `create-speaker-deck-baxter` · `trig_01YPMLFnticN545GzH7ssfFh` |
+| Schedule | `0 14 * * 1-5` (UTC; 9am EST / 10am EDT) |
+| MCP Connections | HubSpot, Notion, Google Drive, Granola |
+| Slack | Baxter bot via `$BAXTER_TOKEN` (curl) |
+| Prompt | [create-speaker-deck-baxter.md](create-speaker-deck-baxter.md) |
+| Template | NTN Google Slides General Template `1qkcB4aOvxVT7fRtFwgYyHMakbGbbfm-a4itnx9dfkpk` |
+| Playbook | NTN Speaker Deck Playbook `191e-gvOlEAZ_BfuoEJUIZNWWML6XOGl9_GXBEES_g1w` |
+| Fallback folder | Upcoming Speaker Events `1RERSeJYFD08Bl3ysU9U1cMPezwYPoJC7` |
 
-## Files
-
-| File | Contents |
-| --- | --- |
-| `SKILL.md` | Full prompt for `create-speaker-deck` routine |
-| `REFLECTION.md` | Full prompt for `deck-reflection-agent` routine |
+`deck-reflection-agent` (`trig_01UELX1NVCc158G3hGMKHtf9`, prompt in [REFLECTION.md](REFLECTION.md)) is still disabled. It could be re-enabled to read Deck Notes from the new review tasks and update the playbook.
