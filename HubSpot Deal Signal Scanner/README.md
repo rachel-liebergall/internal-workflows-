@@ -10,12 +10,10 @@ Runs every Tuesday and Friday at 9am EDT. On each run it:
    - **HubSpot (primary, team-wide):** all logged emails for every owner (Rachel, Jess, Jason, Heather, Macrae, Patrick; every inbox is connected), plus calls, meetings and notes
    - **Google Calendar (supplement):** every team member's calendar (Rachel, Jess, Jason, Heather, Macrae, Welrose, Aidan, Liv, Patrick; read by passing `calendarId`), used only to find meetings with people who aren't in HubSpot yet
    - Gmail is not used, because the team's email is already in HubSpot
-2. Applies five signal types:
+2. Applies three signal types, posted in this order:
+   - **Signal E** — Team contacts who aren't in HubSpot yet
    - **Signal A** — Activity with no open deal (potential new opportunity)
    - **Signal B** — Re-engagement after 30+ days of silence
-   - **Signal C** — Multiple contacts from the same company active within 4 days
-   - **Signal D** — Open deals with no activity in more than 7 days
-   - **Signal E** — Team contacts who aren't in HubSpot yet
 3. Posts a formatted summary to #sales-tracking
 4. Posts "No signals to flag" if nothing is found
 
@@ -51,3 +49,4 @@ Two variants exist — one uses Baxter's bot token for Slack, the other uses the
 - Oct 26, 2026 (later): switched to a team-wide HubSpot scan. All logged email for every owner is read from HubSpot instead of Rachel's Gmail; calendars only supplement. Signal E now covers the whole team. Sections capped at 10 items.
 - Oct 28, 2026: summary is now sent as one Slack post (sections as blocks). Plain-text posts over ~4,000 characters were being split into two messages.
 - Oct 28, 2026: calendar supplement expanded from 4 calendars to all 9 team members (Heather, Welrose, Aidan, Liv and Patrick added). Access was verified for all of them except Liv, whose check hit a temporary Google quota limit; Liv was readable earlier the same week. The scanner retries once on quota errors. Also fixed: the Oct 27 run skipped calendars entirely, because it never loaded the deferred Calendar tools. Step 4 is now marked required, and the run can't post until every calendar has been attempted.
+- Nov 10, 2026 (Baxter variant): dropped Signal C (multi-contact clusters) and Signal D (deals going silent). The post now leads with team contacts not in HubSpot, then external activity with no open deal, then re-engagements; sections capped at 15 items.

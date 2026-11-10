@@ -63,17 +63,11 @@ Combine Steps 2–4 into one activity list per external contact/company. For eac
 Contacts or companies with external email or meeting activity in the last 4 days but NO open deal in HubSpot. Prioritize threads where a team member actively replied or met with them over one-way inbound mail.
 Collect: contact name + job title (if known), company, NTN team member(s) involved, activity type and date, 1-sentence subject/summary.
 
+(There is no Signal C or D: multi-contact clusters and deals going silent are no longer reported.)
+
 ### Signal B — Re-engagement after silence
 Contacts with NO activity for 30+ days before this window who now have new activity.
 Collect: contact name + job title, company, days silent, the new activity (type + 1-sentence summary), prior deal history (any deal? stage reached? outcome?).
-
-### Signal C — Multi-contact cluster
-Two or more different contacts from the same company active in the last 4 days (any source, any team member).
-Flag: company, contacts, activity types, and which team members were involved.
-
-### Signal D — Deals going silent
-Open deals (not Closed Won or Closed Lost) whose last recorded activity is more than 7 days ago.
-Flag: deal name, company, stage, owner, days since last activity.
 
 ### Signal E — Team contacts not in HubSpot
 External people a team member emailed or met with in the last 4 days (from logged emails with no associated contact, or from calendar events) who do NOT exist as a HubSpot contact.
@@ -90,6 +84,11 @@ _Calendars checked: [N]/9[ — missing: names]_"
 Otherwise send:
 "📡 *HubSpot Deal Signals* — [date]
 
+*🆕 Team contacts not in HubSpot:*
+• *[Contact Name]* @ [Company domain] — [activity type], [date] (via [team member])
+   _[Subject or 1-sentence summary]_
+   Not in CRM.
+
 *🟢 External activity with no open deal:*
 • *[Contact Name]*, [Job Title] @ [Company] — [activity type], [date] (via [team member(s)])
    _[Subject or 1-sentence summary]_
@@ -100,20 +99,9 @@ Otherwise send:
    _[Subject or 1-sentence summary]_
    Prior deal: [deal name + stage + outcome, or 'No prior deal found']
 
-*👥 Multi-contact clusters:*
-• [Company]: [Contact 1], [Contact 2] active ([activity types]; via [team members])
-
-*⏳ Deals going silent:*
-• [Deal Name] ([Company]) — [stage], owner [name], last activity [X] days ago
-
-*🆕 Team contacts not in HubSpot:*
-• *[Contact Name]* @ [Company domain] — [activity type], [date] (via [team member])
-   _[Subject or 1-sentence summary]_
-   Not in CRM.
-
 _[Total signals found: N] · Sources: HubSpot team-wide email, calls, meetings & notes · Calendars checked: [N]/9[ — missing: names][; any other source that failed]_"
 
-Skip any section with no findings. Keep each section to the 10 most important items; add "+N more" if there are more.
+Skip any section with no findings. Keep each section to the 15 most important items; add "+N more" if there are more. Do not add sections for multi-contact clusters or deals going silent.
 **One message only:** the whole summary goes out as a single Slack post (see the SLACK section: sections as blocks). Never split it across several posts or thread replies.
 
 ## STEP 7 — DONE
