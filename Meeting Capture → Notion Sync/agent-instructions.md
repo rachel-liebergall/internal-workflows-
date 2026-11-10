@@ -85,10 +85,10 @@ For each new meeting, call `get_meetings` with the meeting ID to retrieve:
 - **Sub-folder** = the subfolder name within that folder, if one exists
 
 ### Internal or External?
-Classify based on the **Granola folder name** (primary signal), attendees as fallback:
-1. Folder contains "Customer", "Client", "External", "Partner", or "Sales" → **"External"**
-2. Folder contains "Internal", "Team", "Standup", "All-hands", or "1:1" → **"Internal"**
-3. Fallback: any non-@nowtonext.ai attendee → **"External"**, all @nowtonext.ai → **"Internal"**
+Use the first rule that applies. The title prefixes come from the invite naming rules in Operations → Call Management:
+1. **Title prefix:** starts with "Intro", "NTN Connect", "NTN Follow-up", "NTN x " or "Now to Next x " → **"External"**. Starts with "INTERNAL" → **"Internal"**.
+2. **Folder:** the meeting is in "Customer calls" or one of its sub-folders, or the folder name contains "Customer", "Client", "External" or "Partner" → **"External"**. Do NOT treat "Team Nowtonext" as a signal either way: client calls are sometimes filed there.
+3. **Attendees:** any attendee outside @nowtonext.ai → **"External"**; all @nowtonext.ai → **"Internal"**. Team members' personal addresses (e.g. jasonaverbook@gmail.com, heather.averbook@gmail.com) count as internal.
 
 ### Summary
 - Use the full AI-generated summary from Granola
@@ -112,18 +112,18 @@ Classify based on the **Granola folder name** (primary signal), attendees as fal
 
 ### Projects (relation)
 
-1. Query the Projects database (collection://7fe56cd2-373b-8368-a21c-87f2c9b61ec3) to list all project names
+1. Once per run, query the Projects database (collection://7fe56cd2-373b-8368-a21c-87f2c9b61ec3) for every project's name, Status, Tags, Manager, Speaker(s), Event Date, `Description/ notes ` and `Notes (migrated)`.
 
-2. Try to find a confident match using this order:
-   - If **Sub-folder** is set: fuzzy match against project names ("CHS Inc" matches "CHS", "CHS Inc. Project", etc.)
-   - If no sub-folder: match by attendee company names derived from non-@nowtonext.ai email domains
-   - If **Internal**: match by meeting title keywords against active project names
+2. Try to find a confident match using this order (stop at the first match):
+   - **Named in the title:** the project or client named in the invite title (Call Management formats): the text after "<>" in `INTERNAL: Strategy Session <> [Project Name]` / `INTERNAL: Operations <> [Project Name]` / `Intro: [Name] <> [Client]` / `NTN Connect: [Name] <> [Client]`, or the client in `NTN Follow-up: [Client]` / `NTN x [Client]: [Title]`. Fuzzy match it against project names ("CHS Inc" matches "CHS", "CHS Inc. Project", etc.).
+   - **Sub-folder:** if set, fuzzy match it against project names.
+   - **Content:** compare the meeting (title, summary, to-dos, attendees and their company domains, any client, event, offering or deliverable it names) against every project's name, description, notes, tags, speakers and event date. Match only when the meeting clearly refers to what one project describes (e.g. the summary discusses the client, event or deliverable named in that project's description), not on a shared generic word. Prefer projects whose Status is not Done or Lost.
 
-3. If a confident specific match is found: set Projects to that project
+3. If a confident specific match is found: set Projects to that project. If two projects fit equally well, use neither and use the fallback in step 4 or 5.
 
 4. If NO confident match is found AND the meeting is **External**: set Projects to the **"Opportunity Tracking"** project (find the project whose name contains "Opportunity Tracking" in the Projects list and use its page URL)
 
-5. If no match and meeting is **Internal**: leave Projects blank
+5. If NO confident match is found AND the meeting is **Internal**: set Projects to the **"NTN Operations"** project (its page URL from the Projects list). Recurring team meetings (scrums, syncs, engineering, strategy and pipeline reviews) normally land here.
 
 ### Sales Opportunity (relation)
 
@@ -156,13 +156,14 @@ Immediately before creating, re-check Step 2 rule 1 for this meeting's ID with a
 - A meeting is skipped only if: same Granola ID; or same title on the same day; or start time within 15 minutes plus a shared attendee
 - Date is saved with the start time
 - All columns populated where data is available
-- Internal/External classified by folder name first, attendee domains as fallback
-- Projects: specific project when matched, "Opportunity Tracking" for unmatched external meetings, blank for internal
+- Internal/External classified by title prefix first, then folder, then attendee domains
+- Projects: specific project when matched (title, sub-folder, or project description/details), otherwise "Opportunity Tracking" for external and "NTN Operations" for internal; never blank
 - Sales Opportunity: populated when Projects = "Opportunity Tracking" and company matches an open opportunity
 
 ## Notes
 - Granola account: rachel@nowtonext.ai (workspace: Nowtonext, ID: 711732b8-9958-4c2c-9427-572bc064f857)
-- Be conservative on specific project matching — prefer "Opportunity Tracking" over a wrong project
+- Be conservative on specific project matching — prefer "Opportunity Tracking" / "NTN Operations" over a wrong project
+- The naming and filing rules these steps rely on live in Operations → Call Management (https://app.notion.com/p/36456cd2373b8018afafc579ad67d832). Keep the two in sync.
 - Be conservative on Sales Opportunity matching — blank is better than a wrong relation
 - New multi-select option values (attendee emails) should be added as new options automatically
 - When unsure whether a meeting is already synced, ADD it. Only skip when one of the three rules matches.

@@ -52,9 +52,9 @@ Retrieves AI summary, action items, participants, transcript URL, folder/subfold
 Top-level and nested Granola folder the meeting belongs to.
 
 **Internal or External?**
-Classified by folder name first, attendee domains as fallback:
-- Folder contains "Customer", "Client", "External", "Partner", "Sales" → **External**
-- Folder contains "Internal", "Team", "Standup", "All-hands", "1:1" → **Internal**
+First rule that applies (title prefixes from Call Management):
+- Title starts with "Intro", "NTN Connect", "NTN Follow-up", "NTN x ", "Now to Next x " → **External**; starts with "INTERNAL" → **Internal**
+- In "Customer calls" (or a sub-folder), or folder contains "Customer", "Client", "External", "Partner" → **External** ("Team Nowtonext" is not a signal)
 - Fallback: any non-@nowtonext.ai attendee → External; all @nowtonext.ai → Internal
 
 **Summary**
@@ -77,11 +77,11 @@ All participant emails as multi-select. New options added automatically.
 Always `rachel@nowtonext.ai`
 
 **Projects (relation)**
+- Project or client named in the title (text after "<>", or the client in `NTN Follow-up:` / `NTN x [Client]:`) → fuzzy match against project names
 - Sub-folder set → fuzzy match against project names
-- No sub-folder → match by attendee company domain
-- Internal meeting → match by meeting title keywords
-- No confident match + External meeting → defaults to "Opportunity Tracking" project
-- No confident match + Internal meeting → left blank
+- Otherwise → match the meeting's content (summary, attendees' companies, named client/event/deliverable) against each project's description, notes, tags, speakers and event date
+- No confident match + External meeting → "Opportunity Tracking" project
+- No confident match + Internal meeting → "NTN Operations" project
 
 **Sales Opportunity (relation)**
 - Only runs when Projects resolves to "Opportunity Tracking"
@@ -108,6 +108,7 @@ Creates a new page in Team Granola Capture with all columns populated.
 ## Notes
 - Migrated from Claude Code desktop local scheduler to remote trigger on 2026-05-18
 - Remote trigger runs independently of user's device
-- Be conservative on Projects matching — blank is better than wrong
+- Be conservative on specific project matching — the Opportunity Tracking / NTN Operations fallback is better than a wrong project
 - Oct 16, 2026: dedupe rebuilt on exact Granola-ID matching (old check looked for `/meetings/` links while saved links are `/d/`), schedule set to weekdays 7am–7pm; skip only on a certain match (same ID, same title same day, or same start time + shared attendee), otherwise add
 - Nov 5, 2026: added a 30-day Team-space pass. Teammates' notes filed into a team folder more than 3 days after the meeting were never synced (8 of 39 in the prior 30 days). Existing-row check widened from 14 to 45 days to match.
+- Nov 10, 2026: project and Internal/External rules aligned with Call Management. Internal meetings with no match had been left blank (e.g. every "Bi-Weekly Team Engineering Sesh"); they now match on project descriptions/details and otherwise default to NTN Operations. The "Team" folder keyword was dropped because it marked client calls filed in Team Nowtonext as Internal. Applies going forward only; existing rows were not changed.
