@@ -77,6 +77,7 @@ All participant emails as multi-select. New options added automatically.
 Always `rachel@nowtonext.ai`
 
 **Projects (relation)**
+- `INTERNAL: Working Session` with no "<>" (general team working session) → "NTN Operations", no content matching
 - Project or client named in the title (text after "<>", or the client in `NTN Follow-up:` / `NTN x [Client]:`) → fuzzy match against project names
 - Sub-folder set → fuzzy match against project names
 - Otherwise → match the meeting's content (summary, attendees' companies, named client/event/deliverable) against each project's description, notes, tags, speakers and event date
@@ -112,3 +113,4 @@ Creates a new page in Team Granola Capture with all columns populated.
 - Oct 16, 2026: dedupe rebuilt on exact Granola-ID matching (old check looked for `/meetings/` links while saved links are `/d/`), schedule set to weekdays 7am–7pm; skip only on a certain match (same ID, same title same day, or same start time + shared attendee), otherwise add
 - Nov 5, 2026: added a 30-day Team-space pass. Teammates' notes filed into a team folder more than 3 days after the meeting were never synced (8 of 39 in the prior 30 days). Existing-row check widened from 14 to 45 days to match.
 - Nov 10, 2026: project and Internal/External rules aligned with Call Management. Internal meetings with no match had been left blank (e.g. every "Bi-Weekly Team Engineering Sesh"); they now match on project descriptions/details and otherwise default to NTN Operations. The "Team" folder keyword was dropped because it marked client calls filed in Team Nowtonext as Internal. Applies going forward only; existing rows were not changed.
+- Nov 10, 2026 (later): general team working sessions. `INTERNAL: Working Session` with no "<>" always goes to NTN Operations; `INTERNAL: Working Session <> [Project]` uses the named project. Matches Call Management.

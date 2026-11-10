@@ -19,8 +19,8 @@ Query Team Granola Capture with SQL (collection://0a856cd2-373b-826f-a55d-07b96b
 ## STEP 2 — CHECK EACH ROW AGAINST THE RULES
 The rules (Operations → Call Management, section 6):
 - Internal/External: title prefix `Intro` / `NTN Connect` / `NTN Follow-up` / `NTN x` / `Now to Next x` → External, `INTERNAL` → Internal; else filed in Customer calls → External; else any attendee outside @nowtonext.ai → External.
-- Project: named in the title → client sub-folder → content match on project descriptions → fallback Opportunity Tracking (External) or NTN Operations (Internal). Never blank.
-Flag a row (⚠️) if: Projects is blank; External with NTN Operations; Internal with Opportunity Tracking; the label contradicts the title prefix; it has an outside attendee but is marked Internal; or the title names a project/client that exists but a different project was set.
+- Project: `INTERNAL: Working Session` with no "<>" → NTN Operations; otherwise named in the title → client sub-folder → content match on project descriptions → fallback Opportunity Tracking (External) or NTN Operations (Internal). Never blank.
+Flag a row (⚠️) if: Projects is blank; External with NTN Operations; Internal with Opportunity Tracking; the label contradicts the title prefix; it has an outside attendee but is marked Internal; a general working session (no "<>") is not NTN Operations; or the title names a project/client that exists but a different project was set.
 
 ## STEP 3 — DM RACHEL (always, once per run)
 Send ONE Slack DM to Rachel (U0ACE0F48F6) via the Slack Web API using Baxter's bot token. Do NOT use any Slack MCP tool. The token is in the `BAXTER_TOKEN` environment variable: reference it only as `$BAXTER_TOKEN` inside curl headers. NEVER echo, print, or log it.
