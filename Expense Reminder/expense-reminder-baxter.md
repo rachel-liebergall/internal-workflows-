@@ -2,7 +2,7 @@
 name: expense-reminder-baxter
 description: Send a Slack DM to every @nowtonext.ai member of the Slack workspace (list pulled from Slack each run) asking them to check Ramp that day (receipts, billable Y/N, client) so clients can be billed on time, every Monday and Friday (sent as Baxter).
 trigger_id: trig_01AKbYasTyixCoF5paBhN1x4
-schedule: Mon & Fri (0 13 * * 1,5 UTC: 9am EDT / 8am EST)
+schedule: Mon & Fri (0 14 * * 1,5 UTC: 9am EST / 10am EDT)
 mcp_connections: none needed
 slack_sender: Baxter bot ($BAXTER_TOKEN)
 ---
