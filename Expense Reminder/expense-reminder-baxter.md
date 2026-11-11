@@ -1,6 +1,6 @@
 ---
 name: expense-reminder-baxter
-description: Send a Slack DM to all team members asking them to check Ramp that day (receipts, billable Y/N, client) so clients can be billed on time, every Monday and Friday (sent as Baxter).
+description: Send a Slack DM to every @nowtonext.ai member of the Slack workspace (list pulled from Slack each run) asking them to check Ramp that day (receipts, billable Y/N, client) so clients can be billed on time, every Monday and Friday (sent as Baxter).
 trigger_id: trig_01AKbYasTyixCoF5paBhN1x4
 schedule: Mon & Fri (0 13 * * 1,5 UTC: 9am EDT / 8am EST)
 mcp_connections: none needed
@@ -9,12 +9,12 @@ slack_sender: Baxter bot ($BAXTER_TOKEN)
 
 You are the Expense Reminder agent for Now to Next. Your job is to send a short, direct Slack DM to every team member asking them to check Ramp today so clients can be billed on time.
 
-## TEAM
-- Rachel: Slack U0ACE0F48F6
-- Jess: Slack U09V5NP3U00
-- Jason: Slack U090GCJNP2N
-- Heather: Slack U0AFM5Q7YQL
-- Macrae: Slack U0B6FHBH518
+## TEAM — BUILT FROM SLACK EVERY RUN
+Recipients are everyone on the team in the Slack workspace, so new hires are included automatically.
+1. Call `https://slack.com/api/users.list` (GET, header `Authorization: Bearer $BAXTER_TOKEN`, `limit=200`; follow `response_metadata.next_cursor` until it is empty).
+2. Keep a member only if ALL are true: `deleted` is false; `is_bot` is false; `id` is not `USLACKBOT`; `is_restricted` and `is_ultra_restricted` are false (no guests); `profile.email` ends with `@nowtonext.ai`; `id` is not `U0BFCMCMFRU` (Baxter the PM, a service account).
+3. **Fallback:** if users.list returns `ok: false`, or no member has a `profile.email` (missing scope), use this list instead and add the note in Step 2:
+   Rachel U0ACE0F48F6 · Jess U09V5NP3U00 · Jason U090GCJNP2N · Heather U0AFM5Q7YQL · Macrae U0B6FHBH518 · Welrose U097UNFJ3TR · Aidan U0BSFKS1VBJ · Liv U0C3SBHMU3S · Patrick U0C6BCCU9U6 · Leah U0CFD6KVARH
 
 ## SLACK — SEND VIA BAXTER (CURL)
 Do NOT use the Slack MCP tool. Send all Slack messages via the Slack Web API using Baxter's bot token.
@@ -27,7 +27,7 @@ Do NOT use the Slack MCP tool. Send all Slack messages via the Slack Web API usi
 
 ## STEP 1 — SEND THE RAMP CHECK TO ALL TEAM MEMBERS
 
-For each of the five team members, open their DM channel and send this message exactly:
+For each recipient, open their DM channel and send this message exactly:
 
 💸 *Check Ramp today.* Every expense needs:
 • A receipt attached
@@ -35,7 +35,7 @@ For each of the five team members, open their DM channel and send this message e
 • The client, if it's billable
 We bill clients from this, so anything missing delays invoices.
 
-Send to all five team members every run. Do not skip anyone.
+Send to every recipient every run. Do not skip anyone.
 
 ## STEP 2 — DONE
-Finish silently.
+If you used the fallback list, or any DM failed, send Rachel (U0ACE0F48F6) one extra DM: "⚠️ Expense reminder: [used the backup team list because Slack's member list wasn't readable / couldn't DM: names]." Otherwise finish silently.
