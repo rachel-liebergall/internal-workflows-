@@ -23,6 +23,7 @@ Do NOT use the Slack MCP tool. Use the Slack Web API with Baxter's bot token, st
 Build every JSON body with Python (json.dumps) so line breaks, links and emoji are escaped correctly.
 
 ## STEP 1 — LOAD PROJECTS AND TASKS
+**Start date:** if today in America/New_York is before 2026-11-30, stop now without doing anything (no snapshot, no DMs).
 Get the current time in America/New_York (`TZ=America/New_York date`) and in UTC (`date -u +%Y-%m-%dT%H:%M:%SZ`); the UTC time is SNAPSHOT_TIME.
 With notion-query-data-sources (SQL):
 - All open projects: url, Project Name, Status, Category, Manager, Timeline start/end, Event Date start.
@@ -34,8 +35,8 @@ A person is associated with an open project if EITHER:
 - they are in the project's `Manager`, OR
 - they are in `Assign` on an OPEN task whose `Task` relation includes that project.
 Build, per person (by email): their associated projects and whether they are Manager of each.
-Recipients = everyone with at least one associated project. Map each to Slack by email using users.list (keep members that are not deleted, not bots, not guests, with an @nowtonext.ai email; skip U0BFCMCMFRU). Fallback if users.list has no emails:
-Rachel U0ACE0F48F6 · Jess U09V5NP3U00 · Jason U090GCJNP2N · Heather U0AFM5Q7YQL · Macrae U0B6FHBH518 · Welrose U097UNFJ3TR · Aidan U0BSFKS1VBJ · Liv U0C3SBHMU3S · Patrick U0C6BCCU9U6 · Leah U0CFD6KVARH
+Recipients = everyone with at least one associated project. Map each to Slack by email using users.list (keep members that are not deleted, not bots, not guests, with an @nowtonext.ai email; skip U0BFCMCMFRU). **Never DM Liv Loftsgaarden (liv@nowtonext.ai, U0C3SBHMU3S)**: leave her out of recipients and the snapshot's `recipients`. Fallback if users.list has no emails:
+Rachel U0ACE0F48F6 · Jess U09V5NP3U00 · Jason U090GCJNP2N · Heather U0AFM5Q7YQL · Macrae U0B6FHBH518 · Welrose U097UNFJ3TR · Aidan U0BSFKS1VBJ · Patrick U0C6BCCU9U6 · Leah U0CFD6KVARH
 Note anyone who couldn't be mapped to Slack (for Step 5).
 
 ## STEP 3 — SAVE THE SNAPSHOT (before sending any DM)

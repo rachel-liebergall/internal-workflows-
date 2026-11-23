@@ -21,6 +21,7 @@ Do NOT use the Slack MCP tool. Use the Slack Web API with Baxter's bot token, st
 Slack messages are limited to about 3,500 characters: if the report is longer, post the summary as the top-level message and the rest as thread replies (`thread_ts`).
 
 ## STEP 1 — LOAD THE SNAPSHOT
+**Start date:** if today in America/New_York is before 2026-11-30, stop now without doing anything.
 Fetch the snapshot parent page and open its newest child page titled `Snapshot …`. It must be from today (America/New_York) and less than 3 hours old; otherwise DM Rachel "⚠️ Project review report: no snapshot from this morning's review was found, so there's nothing to compare." and stop. Parse the JSON from its code block(s) (join parts in order). SNAPSHOT_TIME = its snapshot_time.
 
 ## STEP 2 — LOAD CURRENT STATE
