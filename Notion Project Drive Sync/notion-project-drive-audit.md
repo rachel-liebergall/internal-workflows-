@@ -31,8 +31,8 @@ To map a project's `Manager` (a Notion user) to Slack: look up the Notion user's
 **Default manager = Rachel (U0ACE0F48F6):** if a project has no Manager, or a Manager can't be matched to a Slack ID, treat Rachel as its manager.
 
 ## GOOGLE DRIVE
-- Root: Now to Next Company Files
-- Category-to-subfolder mapping: Category → top-level folder: Client Delivery → 'Client Delivery'; Partnerships → 'Partnerships'; Operations → 'Internal Ops Management'; Offerings → 'Internal Offering Content & Development'. Signal & Events and Brand & Digital Presence have no category folder.
+- Root: Now to Next Company File Repository
+- Category-to-subfolder mapping: Each Category has a top-level folder with the same name: 'Client Delivery', 'Signal & Events', 'Offerings', 'Partnerships', 'Operations', 'Brand & Digital Presence'.
 
 ## SLACK — VIA BAXTER (CURL)
 Do NOT use the Slack MCP tool. Use the Slack Web API with Baxter's bot token.
@@ -52,7 +52,7 @@ Query the Projects data source with SQL for all projects whose Status is one of 
 **In scope:** only projects whose event date is today − 14 days or later (upcoming events and events in the last 2 weeks), plus projects with no event date at all. **Skip every project whose event was more than 14 days ago** — it is not checked and not reported anywhere.
 
 ## STEP 2 — BUILD DRIVE FOLDER INDEX
-Build a two-level index of Now to Next Company Files:
+Build a two-level index of Now to Next Company File Repository:
 1. List all top-level subfolders. Store name + web view link + folder ID.
 2. For each top-level subfolder, list its immediate children. Store name + web view link + folder ID.
 
@@ -65,10 +65,10 @@ If `Google Drive Folder` is empty or null: flag as **missing-link**.
 If `Google Drive Folder` has a URL: extract the folder ID and verify it exists (in the index, or by fetching its metadata if it lives deeper). If the folder can't be found or is trashed: flag as **broken-link**.
 
 ### Check C — Wrong location
-If the folder exists and the project's Category has a category folder: that folder is the expected parent (skip this check for Signal & Events, Brand & Digital Presence, or no Category). If the folder's actual parent does NOT match the expected parent: flag as **wrong-location** with both actual and expected locations.
+If the folder exists and the project has a Category: the Category's top-level folder is the expected parent (skip this check if there is no Category). If the folder's actual parent does NOT match the expected parent: flag as **wrong-location** with both actual and expected locations.
 
 ### Check D — Orphaned Drive folders
-After processing all projects, look at folders in project-type subfolders (Client Delivery, Signal, etc.) that no project's `Google Drive Folder` points to (any status, any date) and that have no matching Notion project by name. Flag as **orphaned**.
+After processing all projects, look at folders in the six Category folders that no project's `Google Drive Folder` points to (any status, any date) and that have no matching Notion project by name. Flag as **orphaned**.
 
 ### Check E — Empty folder within 2 weeks of the event
 For each in-scope project with an existing linked folder and an event date between today − 14 days and today + 14 days: list the folder's contents. The folder is **empty** if it contains no files, and any subfolders inside it also contain no files (check one level of subfolders). If empty → nudge its manager (Step 4).

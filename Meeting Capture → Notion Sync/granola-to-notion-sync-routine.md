@@ -80,7 +80,7 @@ Always `rachel@nowtonext.ai`
 - `INTERNAL: Working Session` with no "<>" (general team working session) → "NTN Operations", no content matching
 - Project or client named in the title (text after "<>", or the client in `NTN Follow-up:` / `NTN x [Client]:`) → fuzzy match against project names
 - Sub-folder set → fuzzy match against project names
-- Otherwise → match the meeting's content (summary, attendees' companies, named client/event/deliverable) against each project's description, notes, tags, speakers and event date
+- Otherwise → match the meeting's content (summary, attendees' companies, named client/event/deliverable) against each project's description, notes, Category, speakers and event date
 - No confident match + External meeting → "Opportunity Tracking" project
 - No confident match + Internal meeting → "NTN Operations" project
 
