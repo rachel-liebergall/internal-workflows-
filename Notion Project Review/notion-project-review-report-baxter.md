@@ -39,7 +39,7 @@ For each task in the snapshot, compare Status, Assign, Due Date, Priority, Name 
 
 ## STEP 4 — TROUBLESHOOTING CHECKS (current state, open projects only)
 - Open tasks overdue (due before today) — count per person, list the 10 oldest.
-- Open tasks with no due date or no assignee — count, list up to 10.
+- Open tasks with no assignee, or no due date (skip Ongoing and Backlog tasks: they are meant to have no due date) — count, list up to 10.
 - Open tasks not linked to any project.
 - Open projects with no Manager, no Category, or a Timeline end in the past while still open.
 - Tasks marked Done whose project is now Done/Lost is fine; projects marked Done that still have open tasks → list.
