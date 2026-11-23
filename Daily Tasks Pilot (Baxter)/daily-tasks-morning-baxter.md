@@ -89,7 +89,7 @@ _+N older overdue tasks. Worth a cleanup pass in <https://app.notion.com/p/36e56
 _+N more this week._ (only if N > 0; "next week" on Fridays)
 
 *Ongoing*
-10. <URL|Task name> · [Project][ · due [Mon D] if dated]
+10. <URL|Task name> · [Project]
 … (max 3)
 _+N more ongoing._ (only if N > 0)
 
@@ -99,6 +99,7 @@ Rules:
 - If nothing is due today, say "Nothing due today 🎉" in place of the project groups, and still show the other sections.
 - Omit any of Overdue / Later this week / Ongoing when empty. Never list the same task twice.
 - Never invent tasks. Only show what the query returned.
+- Never show a due date for tasks with Status Ongoing or Backlog: drop the "due [Mon D]" part of their line wherever they appear (time of day too).
 
 ## STEP 4 — SEND
 Post to the person's channel as a top-level message (not threaded). Then move to the next DUE person. Send nothing else.
