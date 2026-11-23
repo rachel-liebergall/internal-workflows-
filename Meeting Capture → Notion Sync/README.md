@@ -10,8 +10,8 @@ Runs hourly at :16, 7am–7pm EDT, weekdays. On each run it:
 2. Skips a meeting only if it's already in Notion, using exact checks on rows loaded by SQL (no fuzzy search): (1) same Granola ID — the UUID at the end of the Transcript Link, any URL format; (2) same title on the same day; or (3) a start time within 15 minutes plus a shared attendee (the same call recorded by two teammates). **When unsure, it adds the meeting** — Rachel would rather see an occasional duplicate than add meetings by hand. Meetings with no Granola summary after 2 days are added anyway.
 3. Fetches full meeting details: AI summary, action items, participants, transcript URL, folder/subfolder
 4. Classifies each meeting as Internal or External based on the Granola folder name (attendee domains as fallback)
-5. Maps the meeting to a Notion project via fuzzy folder/company name matching; defaults to "Opportunity Tracking" for unmatched external meetings
-6. Sets the Sales Opportunity relation when the project resolves to "Opportunity Tracking" and a company match is found
+5. Maps the meeting to a Notion project via fuzzy folder/company name matching; defaults to "Opp Tracking" for unmatched external meetings
+6. Sets the Sales Opportunity relation when the project resolves to "Opp Tracking" and a company match is found
 7. Creates a new row in Team Granola Capture with all columns populated
 
 ## Notion Database

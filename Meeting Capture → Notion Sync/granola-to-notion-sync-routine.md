@@ -26,7 +26,7 @@ Scans the **Nowtonext** enterprise workspace (ID: `711732b8-9958-4c2c-9427-572bc
 |---|---|---|
 | Team Granola Capture | Destination — one row per meeting | `46756cd2-373b-8263-a24d-01539a3d97cf` |
 | Projects | Project relation mapping | `collection://7fe56cd2-373b-8368-a21c-87f2c9b61ec3` |
-| Sales Opportunities | Sales opportunity relation mapping (when project = Opportunity Tracking) | `collection://05d73447-11f8-439f-9ca9-00c6a1a6fec2` |
+| Sales Opportunities | Sales opportunity relation mapping (when project = Opp Tracking) | `collection://05d73447-11f8-439f-9ca9-00c6a1a6fec2` |
 
 ## Workflow
 
@@ -81,11 +81,11 @@ Always `rachel@nowtonext.ai`
 - Project or client named in the title (text after "<>", or the client in `NTN Follow-up:` / `NTN x [Client]:`) → fuzzy match against project names
 - Sub-folder set → fuzzy match against project names
 - Otherwise → match the meeting's content (summary, attendees' companies, named client/event/deliverable) against each project's description, notes, Category, speakers and event date
-- No confident match + External meeting → "Opportunity Tracking" project
+- No confident match + External meeting → "Opp Tracking" project
 - No confident match + Internal meeting → "NTN Operations" project
 
 **Sales Opportunity (relation)**
-- Only runs when Projects resolves to "Opportunity Tracking"
+- Only runs when Projects resolves to "Opp Tracking"
 - Company name derived from sub-folder (primary) or external attendee email domain (fallback)
 - Fuzzy match against the Company field in Sales Opportunities database
 - Excludes Closed Won / Closed Lost opportunities
@@ -109,7 +109,7 @@ Creates a new page in Team Granola Capture with all columns populated.
 ## Notes
 - Migrated from Claude Code desktop local scheduler to remote trigger on 2026-05-18
 - Remote trigger runs independently of user's device
-- Be conservative on specific project matching — the Opportunity Tracking / NTN Operations fallback is better than a wrong project
+- Be conservative on specific project matching — the Opp Tracking / NTN Operations fallback is better than a wrong project
 - Oct 16, 2026: dedupe rebuilt on exact Granola-ID matching (old check looked for `/meetings/` links while saved links are `/d/`), schedule set to weekdays 7am–7pm; skip only on a certain match (same ID, same title same day, or same start time + shared attendee), otherwise add
 - Nov 5, 2026: added a 30-day Team-space pass. Teammates' notes filed into a team folder more than 3 days after the meeting were never synced (8 of 39 in the prior 30 days). Existing-row check widened from 14 to 45 days to match.
 - Nov 10, 2026: project and Internal/External rules aligned with Call Management. Internal meetings with no match had been left blank (e.g. every "Bi-Weekly Team Engineering Sesh"); they now match on project descriptions/details and otherwise default to NTN Operations. The "Team" folder keyword was dropped because it marked client calls filed in Team Nowtonext as Internal. Applies going forward only; existing rows were not changed.

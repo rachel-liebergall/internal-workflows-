@@ -122,13 +122,13 @@ Use the first rule that applies. The title prefixes come from the invite naming 
 
 3. If a confident specific match is found: set Projects to that project. If two projects fit equally well, use neither and use the fallback in step 4 or 5.
 
-4. If NO confident match is found AND the meeting is **External**: set Projects to the **"Opportunity Tracking"** project (find the project whose name contains "Opportunity Tracking" in the Projects list and use its page URL)
+4. If NO confident match is found AND the meeting is **External**: set Projects to the **"Opp Tracking"** project (https://app.notion.com/40d56cd2373b8017847dc66afb6ab409; if that page is missing, use the project whose name contains "Opp Tracking")
 
 5. If NO confident match is found AND the meeting is **Internal**: set Projects to the **"NTN Operations"** project (its page URL from the Projects list). Recurring team meetings (scrums, syncs, engineering, strategy and pipeline reviews) normally land here.
 
 ### Sales Opportunity (relation)
 
-Only attempt if Projects was set to **"Opportunity Tracking"** in the step above.
+Only attempt if Projects was set to **"Opp Tracking"** in the step above.
 
 1. Determine the company name from:
    - Sub-folder name if set (primary signal)
@@ -158,12 +158,12 @@ Immediately before creating, re-check Step 2 rule 1 for this meeting's ID with a
 - Date is saved with the start time
 - All columns populated where data is available
 - Internal/External classified by title prefix first, then folder, then attendee domains
-- Projects: specific project when matched (title, sub-folder, or project description/details), otherwise "Opportunity Tracking" for external and "NTN Operations" for internal; never blank
-- Sales Opportunity: populated when Projects = "Opportunity Tracking" and company matches an open opportunity
+- Projects: specific project when matched (title, sub-folder, or project description/details), otherwise "Opp Tracking" for external and "NTN Operations" for internal; never blank
+- Sales Opportunity: populated when Projects = "Opp Tracking" and company matches an open opportunity
 
 ## Notes
 - Granola account: rachel@nowtonext.ai (workspace: Nowtonext, ID: 711732b8-9958-4c2c-9427-572bc064f857)
-- Be conservative on specific project matching — prefer "Opportunity Tracking" / "NTN Operations" over a wrong project
+- Be conservative on specific project matching — prefer "Opp Tracking" / "NTN Operations" over a wrong project
 - The naming and filing rules these steps rely on live in Operations → Call Management (https://app.notion.com/p/36456cd2373b8018afafc579ad67d832). Keep the two in sync.
 - Be conservative on Sales Opportunity matching — blank is better than a wrong relation
 - New multi-select option values (attendee emails) should be added as new options automatically
