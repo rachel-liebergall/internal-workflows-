@@ -65,7 +65,7 @@ If `Google Drive Folder` is empty or null: flag as **missing-link**.
 If `Google Drive Folder` has a URL: extract the folder ID and verify it exists (in the index, or by fetching its metadata if it lives deeper). If the folder can't be found or is trashed: flag as **broken-link**.
 
 ### Check C — Wrong location
-If the folder exists and the project has a Category: the Category's top-level folder is the expected parent (skip this check if there is no Category). If the folder's actual parent does NOT match the expected parent: flag as **wrong-location** with both actual and expected locations.
+If the folder exists and the project has a Category: the folder must sit inside the Category's top-level folder, either directly or nested in a subfolder of it (e.g. Client Delivery > BCBSA > HR AI Commons is fine). Walk up the folder's parents to check (skip this check if there is no Category). If the folder is not inside the Category's folder: flag as **wrong-location** with both actual and expected locations.
 
 ### Check D — Orphaned Drive folders
 After processing all projects, look at folders in the six Category folders that no project's `Google Drive Folder` points to (any status, any date) and that have no matching Notion project by name. Flag as **orphaned**.
